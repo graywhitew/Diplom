@@ -61,6 +61,7 @@ package ifneeded awlight 7.6 \
         self.canvas.grid(row=0, column=0, columnspan=4, rowspan=9, sticky=W)
         self.current_value = tk.DoubleVar(value=1.2)
         self.DefaultValues = (0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95)
+        self.DefaultStartValues = (0,1,2,3,4,5,6,7,8,9,10)
         self.slider_label = ttk.Label(
             self.root,
             text='Начальное значение травы:'
@@ -96,12 +97,44 @@ package ifneeded awlight 7.6 \
         self.OtherWindow = ttk.Button(self.root, text="В отдельном окне", command=self.NewWindow)
         self.DopKoef = ttk.Button(self.root, text="Дополнительные коэффициенты", command=self.Update)
 
-        self.SozdKnopokIPoley(1,'Значение коэф. рождаемости кроликов:',3,0,3,1)
-        self.SozdKnopokIPoley(2,'Значение коэф. смертности кроликов:',3,2,3,3)
-        self.SozdKnopokIPoley(3,'Значение коэф. рождаемости лис:',4,0,4,1)
-        self.SozdKnopokIPoley(4,'Значение коэф. смертности лис:',4,2,4,3)
-        self.SozdKnopokIPoley(9,'Коэф. антропогенного фактора:',5,0,5,1)
-        self.SozdKnopokIPoley(10,'Коэф. абиотического фактора:',5,2,5,3)
+        self.CreateKoefSpinBox(1,'Значение коэф. рождаемости кроликов:',3,0,3,1)
+        self.CreateKoefSpinBox(2,'Значение коэф. смертности кроликов:',3,2,3,3)
+        self.CreateKoefSpinBox(3,'Значение коэф. рождаемости лис:',4,0,4,1)
+        self.CreateKoefSpinBox(4,'Значение коэф. смертности лис:',4,2,4,3)
+        self.CreateKoefSpinBox(9,'Коэф. антропогенного фактора:',5,0,5,1)
+        self.CreateKoefSpinBox(10,'Коэф. абиотического фактора:', 5,2,5,3)
+        self.StartValueSpinBox('Начальные значения попудяций', 6,0,6,1)
+        # self.current_value_start1 = tk.StringVar(value=1)
+        # self.current_value_start2 = tk.StringVar(value=4)
+        # self.current_value_start3 = tk.StringVar(value=1)
+        # self.current_value_start4 = tk.StringVar(value=5)
+        # self.StartValue1 = ttk.Spinbox(
+        # values=self.DefaultStartValues,
+        # font=('sans-serif', 12),
+        # textvariable=self.current_value_start1,
+        # width=5)
+        # self.StartValue1.grid(row=6, column=1, sticky="w")
+
+        # self.StartValue2 = ttk.Spinbox(
+        # values=self.DefaultStartValues,
+        # font=('sans-serif', 12),
+        # textvariable=self.current_value_start2,
+        # width=5)
+        # self.StartValue2.grid(row=6, column=1, sticky="w", padx = 100)
+
+        # self.StartValue3 = ttk.Spinbox(
+        # values=self.DefaultStartValues,
+        # font=('sans-serif', 12),
+        # textvariable=self.current_value_start3,
+        # width=5)
+        # self.StartValue3.grid(row=6, column=1, sticky="w", padx = 200)
+
+        # self.StartValue4 = ttk.Spinbox(
+        # values=self.DefaultStartValues,
+        # font=('sans-serif', 12),
+        # textvariable=self.current_value_start4,
+        # width=5)
+        # self.StartValue4.grid(row=6, column=1, sticky="w", padx = 300)
 
         self.Go.grid(row=9, column=0,sticky="w",padx=20)
         self.OtherWindow.grid(row=9, column=3,sticky="w")
@@ -135,10 +168,10 @@ package ifneeded awlight 7.6 \
 
 
     def Update(self):
-        self.SozdKnopokIPoley(5,'Значение коэф. рождаемости мышей:',7,0,7,1)
-        self.SozdKnopokIPoley(6,'Значение коэф. смертности мышей:',7,2,7,3)
-        self.SozdKnopokIPoley(7,'Значение коэф. рождаемости сов:',8,0,8,1)
-        self.SozdKnopokIPoley(8,'Значение коэф. смертности сов:',8,2,8,3)
+        self.CreateKoefSpinBox(5,'Значение коэф. рождаемости мышей:',7,0,7,1)
+        self.CreateKoefSpinBox(6,'Значение коэф. смертности мышей:',7,2,7,3)
+        self.CreateKoefSpinBox(7,'Значение коэф. рождаемости сов:',8,0,8,1)
+        self.CreateKoefSpinBox(8,'Значение коэф. смертности сов:',8,2,8,3)
         self.DopKoef.grid_forget()
         self.DopKoef2 = ttk.Button(self.root, text="Убрать доп. коэффициенты", command=self.UbrDopKoef)
         self.DopKoef2.grid(row=9, column=2, sticky="w")
@@ -164,14 +197,16 @@ package ifneeded awlight 7.6 \
         # self.x[0, :] = self.x0
 
         if self.Vers.get() == 0:
-            self.krb = float(self.spin_box1.get())
-            self.krd = float(self.spin_box2.get())
-            self.kfb = float(self.spin_box3.get())
-            self.kfd = float(self.spin_box4.get())
-            self.a = float(self.spin_box9.get())
-            self.b = float(self.spin_box10.get())
 
-            self.x0 = [1, 1]
+            self.krb = float(globals()['spin_box%s' % 1].get())
+            self.krd = float(globals()['spin_box%s' % 2].get())
+            self.kfb = float(globals()['spin_box%s' % 3].get())
+            self.kfd = float(globals()['spin_box%s' % 4].get())
+            self.a = float(globals()['spin_box%s' % 9].get())
+            self.b = float(globals()['spin_box%s' % 10].get())
+
+            self.x0 = [float(globals()['spin_box_start%s' % 1].get()),
+                            float(globals()['spin_box_start%s' % 2].get())]
             self.x = np.zeros((len(self.t), len(self.x0)))  # array for solution
             self.x[0, :] = self.x0
             self.i = 0
@@ -228,21 +263,102 @@ package ifneeded awlight 7.6 \
             fig.frames = self.frames  
 
             fig.show()
-        if self.Vers.get() == 2:
+        if self.Vers.get() == 1:
             try:
-                
-                
-                self.krb = float(self.spin_box1.get())
-                self.krd = float(self.spin_box2.get())
-                self.kfb = float(self.spin_box3.get())
-                self.kfd = float(self.spin_box4.get())
-                self.kmb = float(self.spin_box5.get())
-                self.kmd = float(self.spin_box6.get())
-                self.kob = float(self.spin_box7.get())
-                self.kod = float(self.spin_box8.get())
-                self.a = float(self.spin_box9.get())
-                self.b = float(self.spin_box10.get())
-                self.x0 = [1, 1, 5, 6]
+                self.krb = float(globals()['spin_box%s' % 1].get())
+                self.krd = float(globals()['spin_box%s' % 2].get())
+                self.kfb = float(globals()['spin_box%s' % 3].get())
+                self.kfd = float(globals()['spin_box%s' % 4].get())
+                self.a = float(globals()['spin_box%s' % 9].get())
+                self.b = float(globals()['spin_box%s' % 10].get())
+                self.kmb = float(globals()['spin_box%s' % 5].get())
+                self.kmd = float(globals()['spin_box%s' % 6].get())
+                self.x0 = [float(globals()['spin_box_start%s' % 1].get()),
+                            float(globals()['spin_box_start%s' % 2].get()),
+                              float(globals()['spin_box_start%s' % 3].get())]
+                self.x = np.zeros((len(self.t), len(self.x0)))  # array for solution
+                self.x[0, :] = self.x0
+                self.i = 0
+                while self.i < self.num - 1:
+                    self.k1 = self.h * self.Ftwo(self.t, self.x[self.i, :], self.i)
+
+                    self.k2 = self.h * self.Ftwo(self.t, self.x[self.i, :] + self.k1 / 2, self.i)
+
+                    self.k3 = self.h * self.Ftwo(self.t, self.x[self.i, :] + self.k2 / 2, self.i)
+
+                    self.k4 = self.h * self.Ftwo(self.t, self.x[self.i, :] + self.k3, self.i)
+
+                    self.x[self.i + 1, :] = self.x[self.i, :] + 1 / 6 * (self.k1 + 2 * self.k2 + 2 * self.k3 + self.k4)
+                    self.i = self.i + 1
+                fig = go.Figure()
+                fig.add_trace(go.Scatter(x=self.t, y=self.x[:, 0]))
+                fig.add_trace(go.Scatter(x=self.t, y=self.x[:, 1]))
+                fig.add_trace(go.Scatter(x=self.t, y=self.x[:, 2]))
+
+                self.num_steps = len(self.x[:, 0])
+                fig = go.Figure(data=[go.Scatter(x=self.t, y=self.x[:, 0], mode='lines', name='Кролики'),
+                                      go.Scatter(x=self.t, y=self.x[:, 1], mode='lines', name='Лисы'),
+                                      go.Scatter(x=self.t, y=self.x[:, 2], mode='lines', name='Мыши')])
+
+                self.frames = []
+                for self.i in range(0, len(self.x[:, 0]), 4):
+                    self.frames.append(go.Frame(name=str(self.i),
+                                                data=[go.Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 0],
+                                                                 mode='lines', name='Кролики'),
+                                                      go.Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 1],
+                                                                 mode='lines', name='Лисы'),
+                                                      go.Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 2],
+                                                                 mode='lines', name='Мыши')]))
+                                                      
+
+                self.steps = []
+                for self.i in range(self.num_steps):
+                    self.step = dict(
+                        label=str(self.i),
+                        method="animate",
+                        args=[[str(self.i)]]
+                    )
+                    self.steps.append(self.step)
+
+                self.sliders = [dict(
+                    steps=self.steps,
+                )]
+
+                fig.update_layout(xaxis_title="Ось X", yaxis_title="Ось Y",updatemenus=[dict(direction="left",
+                                                    x=1,
+                                                    xanchor="center",
+                                                    y=1,
+                                                    showactive=False,
+                                                    type="buttons",
+                                                    buttons=[dict(label="►", method="animate",
+                                                                  args=[None, {"fromcurrent": True}]),
+                                                             dict(label="❚❚", method="animate", args=[[None], {
+                                                                 "frame": {"duration": 0, "redraw": False},
+                                                                 "mode": "immediate",
+                                                                 "transition": {"duration": 0}}])])],
+                                  )
+                fig.layout.sliders = self.sliders
+                fig.frames = self.frames
+
+                fig.show()
+            except:
+                tk.messagebox.showerror(title=None, message='Введите коэффициенты')
+        if self.Vers.get() == 2:
+            try: 
+                self.krb = float(globals()['spin_box%s' % 1].get())
+                self.krd = float(globals()['spin_box%s' % 2].get())
+                self.kfb = float(globals()['spin_box%s' % 3].get())
+                self.kfd = float(globals()['spin_box%s' % 4].get())
+                self.a = float(globals()['spin_box%s' % 9].get())
+                self.b = float(globals()['spin_box%s' % 10].get())
+                self.kmb = float(globals()['spin_box%s' % 5].get())
+                self.kmd = float(globals()['spin_box%s' % 6].get())
+                self.kob = float(globals()['spin_box%s' % 7].get())
+                self.kod = float(globals()['spin_box%s' % 8].get())
+                self.x0 = [float(globals()['spin_box_start%s' % 1].get()),
+                            float(globals()['spin_box_start%s' % 2].get()),
+                              float(globals()['spin_box_start%s' % 3].get()),
+                               float(globals()['spin_box_start%s' % 4].get())]
                 self.x = np.zeros((len(self.t), len(self.x0)))  # array for solution
                 self.x[0, :] = self.x0
                 self.i = 0
@@ -314,7 +430,7 @@ package ifneeded awlight 7.6 \
             except:
                 tk.messagebox.showerror(title=None, message='Введите коэффициенты')
 
-    def SozdKnopokIPoley(self,number,text,rowlabel,columnlabel,rowbox,columnbox):
+    def CreateKoefSpinBox(self,number,text,rowlabel,columnlabel,rowbox,columnbox):
         globals()['label_koef%s' % number] = ttk.Label(self.root, text=text)
         globals()['label_koef%s' % number].grid(row=rowlabel,
                                                 column=columnlabel,
@@ -327,6 +443,22 @@ package ifneeded awlight 7.6 \
         textvariable=globals()['current_value%s' % number],
         width=5)
         globals()['spin_box%s' % number].grid(row=rowbox, column=columnbox, sticky="w")
+
+
+    def StartValueSpinBox(self,text,rowlabel,columnlabel,rowbox,columnbox):
+        globals()['label_koef_start%s' % 1] = ttk.Label(self.root, text=text)
+        globals()['label_koef_start%s' % 1].grid(row=rowlabel,
+                                                    column=columnlabel,
+                                                    sticky='w',
+                                                    padx=20)
+        for i in range(4):
+            globals()['current_value_start%s' % (i+1)] = tk.StringVar(value=i+2)
+            globals()['spin_box_start%s' % (i+1)] = ttk.Spinbox(
+            values=self.DefaultStartValues,
+            font=('sans-serif', 12),
+            textvariable=globals()['current_value_start%s' % (i+1)],
+            width=5)
+            globals()['spin_box_start%s' % (i+1)].grid(row=rowbox, column=columnbox, sticky="w", padx = i*100)
 
     def slider_changed(self,event):
         self.value_label.configure(text=self.get_current_value())
@@ -352,14 +484,15 @@ package ifneeded awlight 7.6 \
         # self.x[0, :] = self.x0
 
         if self.Vers.get() == 0:
-            self.krb = float(self.spin_box1.get())
-            self.krd = float(self.spin_box2.get())
-            self.kfb = float(self.spin_box3.get())
-            self.kfd = float(self.spin_box4.get())
-            self.a = float(self.spin_box9.get())
-            self.b = float(self.spin_box10.get())
+            
+            self.krb = float(globals()['spin_box%s' % 1].get())
+            self.krd = float(globals()['spin_box%s' % 2].get())
+            self.kfb = float(globals()['spin_box%s' % 3].get())
+            self.kfd = float(globals()['spin_box%s' % 4].get())
+            self.a = float(globals()['spin_box%s' % 9].get())
+            self.b = float(globals()['spin_box%s' % 10].get())
 
-            self.x0 = [1, 1]
+            self.x0 = [float(globals()['spin_box_start%s' % 1].get()), float(globals()['spin_box_start%s' % 2].get())]
             self.x = np.zeros((len(self.t), len(self.x0)))  # array for solution
             self.x[0, :] = self.x0
             self.i = 0
@@ -389,19 +522,63 @@ package ifneeded awlight 7.6 \
             self.canvas1 = FigureCanvasTkAgg(self.fig, master = self.root)
             self.canvas1.get_tk_widget().grid(row=0, column=4, sticky='N', rowspan=9)
             self.canvas1.draw()
+
+        if self.Vers.get() == 1:
+            try:
+                self.krb = float(globals()['spin_box%s' % 1].get())
+                self.krd = float(globals()['spin_box%s' % 2].get())
+                self.kfb = float(globals()['spin_box%s' % 3].get())
+                self.kfd = float(globals()['spin_box%s' % 4].get())
+                self.a = float(globals()['spin_box%s' % 9].get())
+                self.b = float(globals()['spin_box%s' % 10].get())
+                self.kmb = float(globals()['spin_box%s' % 5].get())
+                self.kmd = float(globals()['spin_box%s' % 6].get())
+                self.x0 = [float(globals()['spin_box_start%s' % 1].get()),
+                            float(globals()['spin_box_start%s' % 2].get()),
+                              float(globals()['spin_box_start%s' % 3].get())]
+                self.x = np.zeros((len(self.t), len(self.x0)))  # array for solution
+                self.x[0, :] = self.x0
+                self.i = 0
+                while self.i < self.num - 1:
+                    self.k1 = self.h * self.Ftwo(self.t, self.x[self.i, :], self.i)
+
+                    self.k2 = self.h * self.Ftwo(self.t, self.x[self.i, :] + self.k1 / 2, self.i)
+
+                    self.k3 = self.h * self.Ftwo(self.t, self.x[self.i, :] + self.k2 / 2, self.i)
+
+                    self.k4 = self.h * self.Ftwo(self.t, self.x[self.i, :] + self.k3, self.i)
+
+                    self.x[self.i + 1, :] = self.x[self.i, :] + 1 / 6 * (self.k1 + 2 * self.k2 + 2 * self.k3 + self.k4)
+                    self.i = self.i + 1
+                self.fig = Figure(figsize=(6, 6))
+                a = self.fig.add_subplot(111)
+                a.plot(self.t, self.x)
+                plt.xlabel('t axis')
+                plt.ylabel('x axis, Blue-Rabbits, Orange-Foxes, Green-Mice')
+                plt.grid(alpha=.6, linestyle='--')
+
+                self.canvas1 = FigureCanvasTkAgg(self.fig, master=self.root)
+                self.canvas1.get_tk_widget().grid(row=0, column=4, sticky='N', rowspan=9)
+                self.canvas1.draw()
+            except:
+                tk.messagebox.showerror(title=None, message='Введите коэффициенты')
+
         if self.Vers.get() == 2:
             try:
-                self.a = float(self.spin_box9.get())
-                self.b = float(self.spin_box10.get())
-                self.krb = float(self.spin_box1.get())
-                self.krd = float(self.spin_box2.get())
-                self.kfb = float(self.spin_box3.get())
-                self.kfd = float(self.spin_box4.get())
-                self.kmb = float(self.spin_box5.get())
-                self.kmd = float(self.spin_box6.get())
-                self.kob = float(self.spin_box7.get())
-                self.kod = float(self.spin_box8.get())
-                self.x0 = [1, 1, 5, 6]
+                self.krb = float(globals()['spin_box%s' % 1].get())
+                self.krd = float(globals()['spin_box%s' % 2].get())
+                self.kfb = float(globals()['spin_box%s' % 3].get())
+                self.kfd = float(globals()['spin_box%s' % 4].get())
+                self.a = float(globals()['spin_box%s' % 9].get())
+                self.b = float(globals()['spin_box%s' % 10].get())
+                self.kmb = float(globals()['spin_box%s' % 5].get())
+                self.kmd = float(globals()['spin_box%s' % 6].get())
+                self.kob = float(globals()['spin_box%s' % 7].get())
+                self.kod = float(globals()['spin_box%s' % 8].get())
+                self.x0 = [float(globals()['spin_box_start%s' % 1].get()),
+                            float(globals()['spin_box_start%s' % 2].get()),
+                              float(globals()['spin_box_start%s' % 3].get()),
+                               float(globals()['spin_box_start%s' % 4].get())]
                 self.x = np.zeros((len(self.t), len(self.x0)))  # array for solution
                 self.x[0, :] = self.x0
                 self.i = 0
@@ -420,7 +597,7 @@ package ifneeded awlight 7.6 \
                 a = self.fig.add_subplot(111)
                 a.plot(self.t, self.x)
                 plt.xlabel('t axis')
-                plt.ylabel('x axis,,Blue-Rabbits, Orange-Foxes, Green-Mice, Red-Owls')
+                plt.ylabel('x axis, Blue-Rabbits, Orange-Foxes, Green-Mice, Red-Owls')
                 plt.grid(alpha=.6, linestyle='--')
 
                 self.canvas1 = FigureCanvasTkAgg(self.fig, master=self.root)
