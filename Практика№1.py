@@ -16,7 +16,6 @@ from ttkthemes import ThemedTk
 from ttkthemes import ThemedStyle
 import tkinter.filedialog as fd
 import sys
-import plotly
 import plotly.graph_objs as go
 import plotly.express as px
 from plotly.subplots import make_subplots
@@ -31,11 +30,9 @@ matplotlib.use('TkAgg')
 class App(tk.Tk):
     def __init__(self):
         self.root = tk.Tk()
-        self.root.geometry("1350x670")
+        self.root.tk.state('zoomed')
         self.root.title("Хищник-жертва")
-        # self.style = ThemedStyle(self.root)
         self.root.style = ttkthemes.ThemedStyle()
-        # self.style = ttk.Style(self.root)
         self.root.tk.eval("""
 set base_theme_dir /home/graywhite/Загрузки/awthemes-10.4.0
 
@@ -51,13 +48,10 @@ package ifneeded awlight 7.6 \
 # load the awdark and awlight themes
         self.root.tk.call("package", "require", 'awdark')
         self.root.tk.call("package", "require", 'awlight')
-        # self.style.set_theme(self, theme_name='awdark')
-        # self.style.theme_use('awdark')
-        # self.set_theme('awdark')
         self.root.style.theme_use('awdark')
-        # self.style.theme_use('awdark')
+        
         # создаем рабочую область
-        self.canvas = tk.Canvas(self.root, height=600, width=720, bg="grey30", relief=tk.GROOVE, borderwidth=5)
+        self.canvas = tk.Canvas(self.root, height="100%", width='50%', bg="grey30", relief=tk.GROOVE, borderwidth=5)
         self.canvas.grid(row=0, column=0, columnspan=4, rowspan=9, sticky=W)
         self.current_value = tk.DoubleVar(value=1.2)
         self.DefaultValues = (0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95)
@@ -85,13 +79,13 @@ package ifneeded awlight 7.6 \
         self.Choise = tk.IntVar(value=0)
 
         self.checkbutton = ttk.Radiobutton(text="Лисы-Кролики", value=0, variable=self.Vers)
-        self.checkbutton.grid(row=0, column=0, sticky=tk.W,padx = 20)
+        self.checkbutton.grid(row=0, column=0, sticky=tk.W)
 
         self.checkbutton = ttk.Radiobutton(text="Лисы-Кролики-Мыши", value=1, variable=self.Vers)
         self.checkbutton.grid(row=0, column=1, sticky=tk.W)
 
         self.checkbutton = ttk.Radiobutton(text="Лисы-Кролики-Мыши-Совы", value=2, variable=self.Vers)
-        self.checkbutton.grid(row=0, column=2, sticky=tk.W, padx = 20)
+        self.checkbutton.grid(row=0, column=2, sticky=tk.W)
 
         self.Go = ttk.Button(self.root, text="Моделирование", command=self.plot)
         self.OtherWindow = ttk.Button(self.root, text="В отдельном окне", command=self.NewWindow)
@@ -104,39 +98,8 @@ package ifneeded awlight 7.6 \
         self.CreateKoefSpinBox(9,'Коэф. антропогенного фактора:',5,0,5,1)
         self.CreateKoefSpinBox(10,'Коэф. абиотического фактора:', 5,2,5,3)
         self.StartValueSpinBox('Начальные значения попудяций', 6,0,6,1)
-        # self.current_value_start1 = tk.StringVar(value=1)
-        # self.current_value_start2 = tk.StringVar(value=4)
-        # self.current_value_start3 = tk.StringVar(value=1)
-        # self.current_value_start4 = tk.StringVar(value=5)
-        # self.StartValue1 = ttk.Spinbox(
-        # values=self.DefaultStartValues,
-        # font=('sans-serif', 12),
-        # textvariable=self.current_value_start1,
-        # width=5)
-        # self.StartValue1.grid(row=6, column=1, sticky="w")
 
-        # self.StartValue2 = ttk.Spinbox(
-        # values=self.DefaultStartValues,
-        # font=('sans-serif', 12),
-        # textvariable=self.current_value_start2,
-        # width=5)
-        # self.StartValue2.grid(row=6, column=1, sticky="w", padx = 100)
-
-        # self.StartValue3 = ttk.Spinbox(
-        # values=self.DefaultStartValues,
-        # font=('sans-serif', 12),
-        # textvariable=self.current_value_start3,
-        # width=5)
-        # self.StartValue3.grid(row=6, column=1, sticky="w", padx = 200)
-
-        # self.StartValue4 = ttk.Spinbox(
-        # values=self.DefaultStartValues,
-        # font=('sans-serif', 12),
-        # textvariable=self.current_value_start4,
-        # width=5)
-        # self.StartValue4.grid(row=6, column=1, sticky="w", padx = 300)
-
-        self.Go.grid(row=9, column=0,sticky="w",padx=20)
+        self.Go.grid(row=9, column=0,sticky="w",padx=0)
         self.OtherWindow.grid(row=9, column=3,sticky="w")
         self.DopKoef.grid(row=9, column=2, sticky="w")
         self.slider.grid(
@@ -435,7 +398,7 @@ package ifneeded awlight 7.6 \
         globals()['label_koef%s' % number].grid(row=rowlabel,
                                                 column=columnlabel,
                                                 sticky='w',
-                                                padx=20)
+                                                padx=0)
         globals()['current_value%s' % number] = tk.StringVar(value=0.05)
         globals()['spin_box%s' % number] = ttk.Spinbox(
         values=self.DefaultValues,
@@ -450,7 +413,7 @@ package ifneeded awlight 7.6 \
         globals()['label_koef_start%s' % 1].grid(row=rowlabel,
                                                     column=columnlabel,
                                                     sticky='w',
-                                                    padx=20)
+                                                    padx=0)
         for i in range(4):
             globals()['current_value_start%s' % (i+1)] = tk.StringVar(value=i+2)
             globals()['spin_box_start%s' % (i+1)] = ttk.Spinbox(
@@ -484,7 +447,6 @@ package ifneeded awlight 7.6 \
         # self.x[0, :] = self.x0
 
         if self.Vers.get() == 0:
-            
             self.krb = float(globals()['spin_box%s' % 1].get())
             self.krd = float(globals()['spin_box%s' % 2].get())
             self.kfb = float(globals()['spin_box%s' % 3].get())
@@ -507,18 +469,12 @@ package ifneeded awlight 7.6 \
 
                 self.x[self.i + 1, :] = self.x[self.i, :] + 1 / 6 * (self.k1 + 2 * self.k2 + 2 * self.k3 + self.k4)
                 self.i = self.i + 1
-            # fig = go.Figure()
-            # fig = make_subplots(rows=1, cols=2)
-            # fig.add_trace(go.Scatter(x=self.t, y=self.x[:, 0]))
-            # fig.add_trace(go.Scatter(x=self.t, y=self.x[:, 1]))
             self.fig = Figure(figsize=(6, 6))
             a = self.fig.add_subplot(111)
             a.plot(self.t, self.x)
             plt.xlabel('t axis')
             plt.ylabel('x axis,Blue-Rabbits, Orange-Foxes')
             plt.grid(alpha=.6, linestyle='--')
-
-
             self.canvas1 = FigureCanvasTkAgg(self.fig, master = self.root)
             self.canvas1.get_tk_widget().grid(row=0, column=4, sticky='N', rowspan=9)
             self.canvas1.draw()
