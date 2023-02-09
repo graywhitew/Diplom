@@ -57,7 +57,7 @@ class App(tk.Tk):
         # self.root.style.theme_use('awdark')
         
         # создаем рабочую область
-        self.canvas = tk.Canvas(self.root, height="100%", width='50%', bg="grey30", relief=tk.GROOVE, borderwidth=5)
+        self.canvas = tk.Canvas(self.root, height="700", width="650", bg="grey30", relief=tk.GROOVE, borderwidth=5)
         self.canvas.grid(row=0, column=0, columnspan=4, rowspan=9, sticky=W)
         self.current_value = tk.DoubleVar(value=1.2)
         self.DefaultValues = (0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95)
