@@ -30,25 +30,31 @@ matplotlib.use('TkAgg')
 class App(tk.Tk):
     def __init__(self):
         self.root = tk.Tk()
-        self.root.tk.state('zoomed')
+        self.root.geometry('1360x760')
         self.root.title("Хищник-жертва")
-        self.root.style = ttkthemes.ThemedStyle()
-        self.root.tk.eval("""
-set base_theme_dir /home/graywhite/Загрузки/awthemes-10.4.0
+        self.style = ttk.Style()
+        self.root.tk.call('lappend', 'auto_path', '/Users/New/Downloads/awthemes-10.4.0')
+        self.root.tk.call('package', 'require', 'awthemes')
+        self.root.tk.call('::themeutils::setHighlightColor', 'awdark', '#007000')
+        self.root.tk.call('package', 'require', 'awdark')
+        self.style.theme_use('awdark')
+#         self.root.style = ttkthemes.ThemedStyle()
+#         self.root.tk.eval("""
+# set base_theme_dir /home/graywhite/Загрузки/awthemes-10.4.0
 
-package ifneeded awthemes 10.4.0 \
-    [list source [file join $base_theme_dir awthemes.tcl]]
-package ifneeded colorutils 4.8 \
-    [list source [file join $base_theme_dir colorutils.tcl]]
-package ifneeded awdark 7.12 \
-    [list source [file join $base_theme_dir awdark.tcl]]
-package ifneeded awlight 7.6 \
-    [list source [file join $base_theme_dir awlight.tcl]]
-""")
-# load the awdark and awlight themes
-        self.root.tk.call("package", "require", 'awdark')
-        self.root.tk.call("package", "require", 'awlight')
-        self.root.style.theme_use('awdark')
+# package ifneeded awthemes 10.4.0 \
+#     [list source [file join $base_theme_dir awthemes.tcl]]
+# package ifneeded colorutils 4.8 \
+#     [list source [file join $base_theme_dir colorutils.tcl]]
+# package ifneeded awdark 7.12 \
+#     [list source [file join $base_theme_dir awdark.tcl]]
+# package ifneeded awlight 7.6 \
+#     [list source [file join $base_theme_dir awlight.tcl]]
+# """)
+# # load the awdark and awlight themes
+        # self.root.tk.call("package", "require", 'awdark')
+        # self.root.tk.call("package", "require", 'awlight')
+        # self.root.style.theme_use('awdark')
         
         # создаем рабочую область
         self.canvas = tk.Canvas(self.root, height="100%", width='50%', bg="grey30", relief=tk.GROOVE, borderwidth=5)
