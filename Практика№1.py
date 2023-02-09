@@ -57,8 +57,8 @@ class App(tk.Tk):
         # self.root.style.theme_use('awdark')
         
         # создаем рабочую область
-        self.canvas = tk.Canvas(self.root, height="700", width="650", bg="grey30", relief=tk.GROOVE, borderwidth=5)
-        self.canvas.grid(row=0, column=0, columnspan=4, rowspan=9, sticky=W)
+        # self.canvas = tk.Canvas(self.root, height="700", width="1000", bg="grey30", relief=tk.GROOVE, borderwidth=5)
+        # self.canvas.grid(row=0, column=0, columnspan=3, rowspan=9, sticky=W)
         self.current_value = tk.DoubleVar(value=1.2)
         self.DefaultValues = (0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95)
         self.DefaultStartValues = (0,1,2,3,4,5,6,7,8,9,10)
@@ -69,8 +69,7 @@ class App(tk.Tk):
         self.slider_label.grid(
             column=0,
             row=2,
-            sticky='w',
-            padx=20
+            sticky='w'
         )
         self.slider = ttk.Scale(
             self.root,
@@ -84,14 +83,14 @@ class App(tk.Tk):
         self.Vers = tk.IntVar(value=0)
         self.Choise = tk.IntVar(value=0)
 
-        self.checkbutton = ttk.Radiobutton(text="Лисы-Кролики", value=0, variable=self.Vers)
-        self.checkbutton.grid(row=0, column=0, sticky=tk.W)
+        self.checkbutton1 = ttk.Radiobutton(text="Лисы-Кролики", value=0, variable=self.Vers)
+        self.checkbutton1.grid(row=0, column=0, sticky="w")
 
-        self.checkbutton = ttk.Radiobutton(text="Лисы-Кролики-Мыши", value=1, variable=self.Vers)
-        self.checkbutton.grid(row=0, column=1, sticky=tk.W)
+        self.checkbutton2 = ttk.Radiobutton(text="Лисы-Кролики-Мыши", value=1, variable=self.Vers)
+        self.checkbutton2.grid(row=0, column=1, sticky="w")
 
-        self.checkbutton = ttk.Radiobutton(text="Лисы-Кролики-Мыши-Совы", value=2, variable=self.Vers)
-        self.checkbutton.grid(row=0, column=2, sticky=tk.W)
+        self.checkbutton3 = ttk.Radiobutton(text="Лисы-Кролики-Мыши-Совы", value=2, variable=self.Vers)
+        self.checkbutton3.grid(row=0, column=2, sticky="w")
 
         self.Go = ttk.Button(self.root, text="Моделирование", command=self.plot)
         self.OtherWindow = ttk.Button(self.root, text="В отдельном окне", command=self.NewWindow)
@@ -105,9 +104,10 @@ class App(tk.Tk):
         self.CreateKoefSpinBox(10,'Коэф. абиотического фактора:', 5,2,5,3)
         self.StartValueSpinBox('Начальные значения попудяций', 6,0,6,1)
 
-        self.Go.grid(row=9, column=0,sticky="w",padx=0)
-        self.OtherWindow.grid(row=9, column=3,sticky="w")
+        self.Go.grid(row=9, column=0, sticky="w")
+        self.OtherWindow.grid(row=9, column=3, sticky="w")
         self.DopKoef.grid(row=9, column=2, sticky="w")
+
         self.slider.grid(
                      column=1,
                      row=2,
@@ -132,6 +132,8 @@ class App(tk.Tk):
             sticky='w'
         )
 
+        if self.root.state()!= 'normal':
+            sys.exit()
         self.root.mainloop()
 
 
@@ -426,8 +428,8 @@ class App(tk.Tk):
             values=self.DefaultStartValues,
             font=('sans-serif', 12),
             textvariable=globals()['current_value_start%s' % (i+1)],
-            width=5)
-            globals()['spin_box_start%s' % (i+1)].grid(row=rowbox, column=columnbox, sticky="w", padx = i*100)
+            width=2)
+            globals()['spin_box_start%s' % (i+1)].grid(row=rowbox, column=columnbox, sticky="w", padx = i*45)
 
     def slider_changed(self,event):
         self.value_label.configure(text=self.get_current_value())
