@@ -7,6 +7,7 @@ import tkinter as tk
 import tkinter.messagebox as mb
 import random
 import ttkthemes
+from tkinter import font as tkFont
 from PIL import Image, ImageTk
 import matplotlib
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -30,7 +31,11 @@ matplotlib.use('TkAgg')
 class App(tk.Tk):
     def __init__(self):
         self.root = tk.Tk()
-        self.root.geometry('1360x760')
+
+        self.width= self.root.winfo_screenwidth()
+        self.height= self.root.winfo_screenheight()
+        self.root.geometry("%dx%d" % (self.width, self.height))
+
         self.root.title("Хищник-жертва")
         self.style = ttk.Style()
         self.root.tk.call('lappend', 'auto_path', '/Users/New/Downloads/awthemes-10.4.0')
@@ -38,38 +43,46 @@ class App(tk.Tk):
         self.root.tk.call('::themeutils::setHighlightColor', 'awdark', '#007000')
         self.root.tk.call('package', 'require', 'awdark')
         self.style.theme_use('awdark')
-#         self.root.style = ttkthemes.ThemedStyle()
-#         self.root.tk.eval("""
-# set base_theme_dir /home/graywhite/Загрузки/awthemes-10.4.0
 
-# package ifneeded awthemes 10.4.0 \
-#     [list source [file join $base_theme_dir awthemes.tcl]]
-# package ifneeded colorutils 4.8 \
-#     [list source [file join $base_theme_dir colorutils.tcl]]
-# package ifneeded awdark 7.12 \
-#     [list source [file join $base_theme_dir awdark.tcl]]
-# package ifneeded awlight 7.6 \
-#     [list source [file join $base_theme_dir awlight.tcl]]
-# """)
-# # load the awdark and awlight themes
-        # self.root.tk.call("package", "require", 'awdark')
-        # self.root.tk.call("package", "require", 'awlight')
-        # self.root.style.theme_use('awdark')
-        
-        # создаем рабочую область
-        # self.canvas = tk.Canvas(self.root, height="700", width="1000", bg="grey30", relief=tk.GROOVE, borderwidth=5)
-        # self.canvas.grid(row=0, column=0, columnspan=3, rowspan=9, sticky=W)
+        self.Formula = ""
+
+        self.canvas1 = tk.Canvas(self.root, height=str(self.height*0.046), width=str(self.width/1.75), bg="grey30", borderwidth=2, relief=RIDGE)
+        self.canvas1.grid(row=0, column=0, columnspan=4, sticky=W)
+        self.canvas1.create_text(65,10,text = "Режимы работы:", fill = "white", font = 14)
+
+        self.canvas2 = tk.Canvas(self.root, height=str(self.height-(self.height*0.046)*5), width=str(self.width/1.75), bg="grey30")
+        self.canvas2.grid(row=1, column=0, columnspan=4,rowspan=8, sticky=W)
+        self.canvas2.create_text(110,10,text = "Настройка параметров:", fill = "white", font = ("Times New Romance", 15))
+
+        self.canvas3 = tk.Canvas(self.root, height=str(self.height*0.046), width=str(self.width - self.width/1.75), bg="grey30", borderwidth=2, relief=RIDGE)
+        self.canvas3.grid(row=0, column=4, sticky=W)
+        self.canvas3.create_text(100,10,text = "Графики популяций:", fill = "white", font = ("Times New Romance", 15))
+    
+        self.canvas4 = tk.Canvas(self.root, height=str(self.height-(self.height*0.046)*9.5), width=str(self.width - self.width/1.75), bg="grey30")
+        self.canvas4.grid(row=1, column=4, rowspan=6, sticky='NW')
+
+        self.canvas7 = tk.Canvas(self.root, height=str((self.height-(self.height*0.046)*6)-(self.height-(self.height*0.046)*9.5)), width=str(self.width - self.width/1.75), bg="grey30", borderwidth=2, relief=RIDGE)
+        self.canvas7.create_text(320,25,text = self.Formula, fill = "white", font = ("Times New Romance", 10), tag = "formula")
+        self.canvas7.grid(row=7, column=4, sticky=N)
+
+        self.canvas6 = tk.Canvas(self.root, height=str(self.height*0.046), width=self.width, bg="grey30", borderwidth=2, relief=RIDGE)
+        self.canvas6.create_text(165,10,text = "Written by Scherstobitov S.O. Russia. Volgograd. 2023", fill = "white", font = ("Times New Romance", 10))
+        self.canvas6.grid(row=10, column=0, columnspan=5, sticky=N)
+
         self.current_value = tk.DoubleVar(value=1.2)
+
         self.DefaultValues = (0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95)
         self.DefaultStartValues = (0,1,2,3,4,5,6,7,8,9,10)
+
         self.slider_label = ttk.Label(
             self.root,
-            text='Начальное значение травы:'
+            text='Начальное значение травы:', font = 14
         )
         self.slider_label.grid(
             column=0,
             row=2,
-            sticky='w'
+            sticky='w',
+            padx=10
         )
         self.slider = ttk.Scale(
             self.root,
@@ -82,29 +95,31 @@ class App(tk.Tk):
 
         self.Vers = tk.IntVar(value=0)
         self.Choise = tk.IntVar(value=0)
-
+        # self.helv36 = tkFont.Font(family='Helvetica', size=36, weight=tkFont.BOLD)
         self.checkbutton1 = ttk.Radiobutton(text="Лисы-Кролики", value=0, variable=self.Vers)
-        self.checkbutton1.grid(row=0, column=0, sticky="w")
+        self.checkbutton1.grid(row=0, column=0, sticky="w", padx=10)
 
         self.checkbutton2 = ttk.Radiobutton(text="Лисы-Кролики-Мыши", value=1, variable=self.Vers)
-        self.checkbutton2.grid(row=0, column=1, sticky="w")
+        self.checkbutton2.grid(row=0, column=1, sticky="w", padx=10)
 
         self.checkbutton3 = ttk.Radiobutton(text="Лисы-Кролики-Мыши-Совы", value=2, variable=self.Vers)
-        self.checkbutton3.grid(row=0, column=2, sticky="w")
+        self.checkbutton3.grid(row=0, column=2, sticky="w", padx=10)
 
-        self.Go = ttk.Button(self.root, text="Моделирование", command=self.plot)
+        self.Go = ttk.Button(self.root, text="Моделирование", command=self.plot, width=str(self.height*0.046))
+        self.Info = ttk.Button(self.root, text="Методичка", command=self.plot, width=str(self.height*0.046))
         self.OtherWindow = ttk.Button(self.root, text="В отдельном окне", command=self.NewWindow)
         self.DopKoef = ttk.Button(self.root, text="Дополнительные коэффициенты", command=self.Update)
 
-        self.CreateKoefSpinBox(1,'Значение коэф. рождаемости кроликов:',3,0,3,1)
-        self.CreateKoefSpinBox(2,'Значение коэф. смертности кроликов:',3,2,3,3)
-        self.CreateKoefSpinBox(3,'Значение коэф. рождаемости лис:',4,0,4,1)
-        self.CreateKoefSpinBox(4,'Значение коэф. смертности лис:',4,2,4,3)
-        self.CreateKoefSpinBox(9,'Коэф. антропогенного фактора:',5,0,5,1)
-        self.CreateKoefSpinBox(10,'Коэф. абиотического фактора:', 5,2,5,3)
-        self.StartValueSpinBox('Начальные значения попудяций', 6,0,6,1)
+        self.CreateKoefSpinBox(1,'Значение коэф. \nрождаемости кроликов:',3,0,3,1)
+        self.CreateKoefSpinBox(2,'Значение коэф. \nсмертности кроликов:',3,2,3,3)
+        self.CreateKoefSpinBox(3,'Значение коэф. \nрождаемости лис:',4,0,4,1)
+        self.CreateKoefSpinBox(4,'Значение коэф. \nсмертности лис:',4,2,4,3)
+        self.CreateKoefSpinBox(9,'Коэф. \nантропогенного фактора:',5,0,5,1)
+        self.CreateKoefSpinBox(10,'Коэф. \nабиотического фактора:', 5,2,5,3)
+        self.StartValueSpinBox('Начальные \nзначения популяций', 6,0,6,1)
 
         self.Go.grid(row=9, column=0, sticky="w")
+        self.Info.grid(row=9, column=1, sticky="w")
         self.OtherWindow.grid(row=9, column=3, sticky="w")
         self.DopKoef.grid(row=9, column=2, sticky="w")
 
@@ -136,7 +151,141 @@ class App(tk.Tk):
             sys.exit()
         self.root.mainloop()
 
+    def plot(self):
+        self.G = self.current_value.get()
 
+        self.t0 = 0.0
+        self.tmax = 350
+        self.tspan = [self.t0, self.tmax]
+        # self.x0 = [1, 1, 6, 2]
+        self.t = np.linspace(self.t0, self.tmax, 350)  # the points of evaluation of solution                   # initial value
+        self.num = 350
+        self.h = (self.tmax - self.t0) / self.num
+        # решение методом Рунге-Кутты
+        # self.x = np.zeros((len(self.t), len(self.x0)))  # array for solution
+        # self.x[0, :] = self.x0
+
+        if self.Vers.get() == 0:
+            self.canvas7.delete("formula")
+            self.Formula = """Формулы расчётов:\nПопуляция зайцев: krb * (Ground + A * sin(omega * t) + B * sin(omega * t)) * R - kdb * R * F,\nПопуляция Лис: krf * R * F - kdf * F"""
+            # self.Formula = """Популяция зайцев: Коэф. рождаемости кроликов * (Трава + Коэф.  * sin(omega * t) + Коэф. * sin(omega * t)) * 
+            #                   Количество кроликов - Коэф. смертности кроликов * Количество кроликов * Количество лис,
+            #                   Популяция Лис:Коэф. рождаемости лис * Количество кроликов * Количество лис - Коэф. смертности лис * Количество лис"""
+            self.canvas7.create_text(400,35,text = self.Formula, fill = "white", font = ("Times New Romance", 14))
+            self.krb = float(globals()['spin_box%s' % 1].get())
+            self.krd = float(globals()['spin_box%s' % 2].get())
+            self.kfb = float(globals()['spin_box%s' % 3].get())
+            self.kfd = float(globals()['spin_box%s' % 4].get())
+            self.a = float(globals()['spin_box%s' % 9].get())
+            self.b = float(globals()['spin_box%s' % 10].get())
+
+            self.x0 = [float(globals()['spin_box_start%s' % 1].get()), float(globals()['spin_box_start%s' % 2].get())]
+            self.x = np.zeros((len(self.t), len(self.x0)))  # array for solution
+            self.x[0, :] = self.x0
+            self.i = 0
+            while self.i < self.num - 1:
+                self.k1 = self.h * self.Fone(self.t, self.x[self.i, :], self.i)
+
+                self.k2 = self.h * self.Fone(self.t, self.x[self.i, :] + self.k1 / 2, self.i)
+
+                self.k3 = self.h * self.Fone(self.t, self.x[self.i, :] + self.k2 / 2, self.i)
+
+                self.k4 = self.h * self.Fone(self.t, self.x[self.i, :] + self.k3, self.i)
+
+                self.x[self.i + 1, :] = self.x[self.i, :] + 1 / 6 * (self.k1 + 2 * self.k2 + 2 * self.k3 + self.k4)
+                self.i = self.i + 1
+            self.fig = Figure(figsize=(6, 6))
+            a = self.fig.add_subplot(111)
+            a.plot(self.t, self.x)
+            plt.xlabel('t axis')
+            plt.ylabel('x axis,Blue-Rabbits, Orange-Foxes')
+            plt.grid(alpha=.6, linestyle='--')
+            self.canvas5 = FigureCanvasTkAgg(self.fig, master = self.root)
+            self.canvas5.get_tk_widget().grid(row=1, column=4, sticky='NW', rowspan=9, padx=10)
+            self.canvas5.draw()
+
+        if self.Vers.get() == 1:
+            try:
+                self.krb = float(globals()['spin_box%s' % 1].get())
+                self.krd = float(globals()['spin_box%s' % 2].get())
+                self.kfb = float(globals()['spin_box%s' % 3].get())
+                self.kfd = float(globals()['spin_box%s' % 4].get())
+                self.a = float(globals()['spin_box%s' % 9].get())
+                self.b = float(globals()['spin_box%s' % 10].get())
+                self.kmb = float(globals()['spin_box%s' % 5].get())
+                self.kmd = float(globals()['spin_box%s' % 6].get())
+                self.x0 = [float(globals()['spin_box_start%s' % 1].get()),
+                            float(globals()['spin_box_start%s' % 2].get()),
+                              float(globals()['spin_box_start%s' % 3].get())]
+                self.x = np.zeros((len(self.t), len(self.x0)))  # array for solution
+                self.x[0, :] = self.x0
+                self.i = 0
+                while self.i < self.num - 1:
+                    self.k1 = self.h * self.Ftwo(self.t, self.x[self.i, :], self.i)
+
+                    self.k2 = self.h * self.Ftwo(self.t, self.x[self.i, :] + self.k1 / 2, self.i)
+
+                    self.k3 = self.h * self.Ftwo(self.t, self.x[self.i, :] + self.k2 / 2, self.i)
+
+                    self.k4 = self.h * self.Ftwo(self.t, self.x[self.i, :] + self.k3, self.i)
+
+                    self.x[self.i + 1, :] = self.x[self.i, :] + 1 / 6 * (self.k1 + 2 * self.k2 + 2 * self.k3 + self.k4)
+                    self.i = self.i + 1
+                self.fig = Figure(figsize=(6, 6))
+                a = self.fig.add_subplot(111)
+                a.plot(self.t, self.x)
+                plt.xlabel('t axis')
+                plt.ylabel('x axis, Blue-Rabbits, Orange-Foxes, Green-Mice')
+                plt.grid(alpha=.6, linestyle='--')
+
+                self.canvas5 = FigureCanvasTkAgg(self.fig, master = self.root)
+                self.canvas5.get_tk_widget().grid(row=1, column=4, sticky='NW', rowspan=9, padx=10)
+                self.canvas5.draw()
+            except:
+                tk.messagebox.showerror(title=None, message='Введите коэффициенты')
+
+        if self.Vers.get() == 2:
+            try:
+                self.krb = float(globals()['spin_box%s' % 1].get())
+                self.krd = float(globals()['spin_box%s' % 2].get())
+                self.kfb = float(globals()['spin_box%s' % 3].get())
+                self.kfd = float(globals()['spin_box%s' % 4].get())
+                self.a = float(globals()['spin_box%s' % 9].get())
+                self.b = float(globals()['spin_box%s' % 10].get())
+                self.kmb = float(globals()['spin_box%s' % 5].get())
+                self.kmd = float(globals()['spin_box%s' % 6].get())
+                self.kob = float(globals()['spin_box%s' % 7].get())
+                self.kod = float(globals()['spin_box%s' % 8].get())
+                self.x0 = [float(globals()['spin_box_start%s' % 1].get()),
+                            float(globals()['spin_box_start%s' % 2].get()),
+                              float(globals()['spin_box_start%s' % 3].get()),
+                               float(globals()['spin_box_start%s' % 4].get())]
+                self.x = np.zeros((len(self.t), len(self.x0)))  # array for solution
+                self.x[0, :] = self.x0
+                self.i = 0
+                while self.i < self.num - 1:
+                    self.k1 = self.h * self.Fall(self.t, self.x[self.i, :], self.i)
+
+                    self.k2 = self.h * self.Fall(self.t, self.x[self.i, :] + self.k1 / 2, self.i)
+
+                    self.k3 = self.h * self.Fall(self.t, self.x[self.i, :] + self.k2 / 2, self.i)
+
+                    self.k4 = self.h * self.Fall(self.t, self.x[self.i, :] + self.k3, self.i)
+
+                    self.x[self.i + 1, :] = self.x[self.i, :] + 1 / 6 * (self.k1 + 2 * self.k2 + 2 * self.k3 + self.k4)
+                    self.i = self.i + 1
+                self.fig = Figure(figsize=(6, 6))
+                a = self.fig.add_subplot(111)
+                a.plot(self.t, self.x)
+                plt.xlabel('t axis')
+                plt.ylabel('x axis, Blue-Rabbits, Orange-Foxes, Green-Mice, Red-Owls')
+                plt.grid(alpha=.6, linestyle='--')
+
+                self.canvas5 = FigureCanvasTkAgg(self.fig, master = self.root)
+                self.canvas5.get_tk_widget().grid(row=1, column=4, sticky='NW', rowspan=9, padx=10)
+                self.canvas5.draw()
+            except:
+                tk.messagebox.showerror(title=None, message='Введите коэффициенты')
 
     def Update(self):
         self.CreateKoefSpinBox(5,'Значение коэф. рождаемости мышей:',7,0,7,1)
@@ -402,26 +551,26 @@ class App(tk.Tk):
                 tk.messagebox.showerror(title=None, message='Введите коэффициенты')
 
     def CreateKoefSpinBox(self,number,text,rowlabel,columnlabel,rowbox,columnbox):
-        globals()['label_koef%s' % number] = ttk.Label(self.root, text=text)
+        globals()['label_koef%s' % number] = ttk.Label(self.root, text=text, font = 14)
         globals()['label_koef%s' % number].grid(row=rowlabel,
                                                 column=columnlabel,
                                                 sticky='w',
-                                                padx=0)
+                                                padx=10)
         globals()['current_value%s' % number] = tk.StringVar(value=0.05)
         globals()['spin_box%s' % number] = ttk.Spinbox(
         values=self.DefaultValues,
         font=('sans-serif', 12),
         textvariable=globals()['current_value%s' % number],
         width=5)
-        globals()['spin_box%s' % number].grid(row=rowbox, column=columnbox, sticky="w")
+        globals()['spin_box%s' % number].grid(row=rowbox, column=columnbox, sticky="w", padx = 10)
 
 
     def StartValueSpinBox(self,text,rowlabel,columnlabel,rowbox,columnbox):
-        globals()['label_koef_start%s' % 1] = ttk.Label(self.root, text=text)
+        globals()['label_koef_start%s' % 1] = ttk.Label(self.root, text=text, font = 14)
         globals()['label_koef_start%s' % 1].grid(row=rowlabel,
                                                     column=columnlabel,
                                                     sticky='w',
-                                                    padx=0)
+                                                    padx=10)
         for i in range(4):
             globals()['current_value_start%s' % (i+1)] = tk.StringVar(value=i+2)
             globals()['spin_box_start%s' % (i+1)] = ttk.Spinbox(
@@ -440,148 +589,19 @@ class App(tk.Tk):
     def Plus(self,numb):
         return float(numb)+1
 
-    def plot(self):
-        self.G = self.current_value.get()
-
-        self.t0 = 0.0
-        self.tmax = 350
-        self.tspan = [self.t0, self.tmax]
-        # self.x0 = [1, 1, 6, 2]
-        self.t = np.linspace(self.t0, self.tmax, 350)  # the points of evaluation of solution                   # initial value
-        self.num = 350
-        self.h = (self.tmax - self.t0) / self.num
-        # решение методом Рунге-Кутты
-        # self.x = np.zeros((len(self.t), len(self.x0)))  # array for solution
-        # self.x[0, :] = self.x0
-
-        if self.Vers.get() == 0:
-            self.krb = float(globals()['spin_box%s' % 1].get())
-            self.krd = float(globals()['spin_box%s' % 2].get())
-            self.kfb = float(globals()['spin_box%s' % 3].get())
-            self.kfd = float(globals()['spin_box%s' % 4].get())
-            self.a = float(globals()['spin_box%s' % 9].get())
-            self.b = float(globals()['spin_box%s' % 10].get())
-
-            self.x0 = [float(globals()['spin_box_start%s' % 1].get()), float(globals()['spin_box_start%s' % 2].get())]
-            self.x = np.zeros((len(self.t), len(self.x0)))  # array for solution
-            self.x[0, :] = self.x0
-            self.i = 0
-            while self.i < self.num - 1:
-                self.k1 = self.h * self.Fone(self.t, self.x[self.i, :], self.i)
-
-                self.k2 = self.h * self.Fone(self.t, self.x[self.i, :] + self.k1 / 2, self.i)
-
-                self.k3 = self.h * self.Fone(self.t, self.x[self.i, :] + self.k2 / 2, self.i)
-
-                self.k4 = self.h * self.Fone(self.t, self.x[self.i, :] + self.k3, self.i)
-
-                self.x[self.i + 1, :] = self.x[self.i, :] + 1 / 6 * (self.k1 + 2 * self.k2 + 2 * self.k3 + self.k4)
-                self.i = self.i + 1
-            self.fig = Figure(figsize=(6, 6))
-            a = self.fig.add_subplot(111)
-            a.plot(self.t, self.x)
-            plt.xlabel('t axis')
-            plt.ylabel('x axis,Blue-Rabbits, Orange-Foxes')
-            plt.grid(alpha=.6, linestyle='--')
-            self.canvas1 = FigureCanvasTkAgg(self.fig, master = self.root)
-            self.canvas1.get_tk_widget().grid(row=0, column=4, sticky='N', rowspan=9)
-            self.canvas1.draw()
-
-        if self.Vers.get() == 1:
-            try:
-                self.krb = float(globals()['spin_box%s' % 1].get())
-                self.krd = float(globals()['spin_box%s' % 2].get())
-                self.kfb = float(globals()['spin_box%s' % 3].get())
-                self.kfd = float(globals()['spin_box%s' % 4].get())
-                self.a = float(globals()['spin_box%s' % 9].get())
-                self.b = float(globals()['spin_box%s' % 10].get())
-                self.kmb = float(globals()['spin_box%s' % 5].get())
-                self.kmd = float(globals()['spin_box%s' % 6].get())
-                self.x0 = [float(globals()['spin_box_start%s' % 1].get()),
-                            float(globals()['spin_box_start%s' % 2].get()),
-                              float(globals()['spin_box_start%s' % 3].get())]
-                self.x = np.zeros((len(self.t), len(self.x0)))  # array for solution
-                self.x[0, :] = self.x0
-                self.i = 0
-                while self.i < self.num - 1:
-                    self.k1 = self.h * self.Ftwo(self.t, self.x[self.i, :], self.i)
-
-                    self.k2 = self.h * self.Ftwo(self.t, self.x[self.i, :] + self.k1 / 2, self.i)
-
-                    self.k3 = self.h * self.Ftwo(self.t, self.x[self.i, :] + self.k2 / 2, self.i)
-
-                    self.k4 = self.h * self.Ftwo(self.t, self.x[self.i, :] + self.k3, self.i)
-
-                    self.x[self.i + 1, :] = self.x[self.i, :] + 1 / 6 * (self.k1 + 2 * self.k2 + 2 * self.k3 + self.k4)
-                    self.i = self.i + 1
-                self.fig = Figure(figsize=(6, 6))
-                a = self.fig.add_subplot(111)
-                a.plot(self.t, self.x)
-                plt.xlabel('t axis')
-                plt.ylabel('x axis, Blue-Rabbits, Orange-Foxes, Green-Mice')
-                plt.grid(alpha=.6, linestyle='--')
-
-                self.canvas1 = FigureCanvasTkAgg(self.fig, master=self.root)
-                self.canvas1.get_tk_widget().grid(row=0, column=4, sticky='N', rowspan=9)
-                self.canvas1.draw()
-            except:
-                tk.messagebox.showerror(title=None, message='Введите коэффициенты')
-
-        if self.Vers.get() == 2:
-            try:
-                self.krb = float(globals()['spin_box%s' % 1].get())
-                self.krd = float(globals()['spin_box%s' % 2].get())
-                self.kfb = float(globals()['spin_box%s' % 3].get())
-                self.kfd = float(globals()['spin_box%s' % 4].get())
-                self.a = float(globals()['spin_box%s' % 9].get())
-                self.b = float(globals()['spin_box%s' % 10].get())
-                self.kmb = float(globals()['spin_box%s' % 5].get())
-                self.kmd = float(globals()['spin_box%s' % 6].get())
-                self.kob = float(globals()['spin_box%s' % 7].get())
-                self.kod = float(globals()['spin_box%s' % 8].get())
-                self.x0 = [float(globals()['spin_box_start%s' % 1].get()),
-                            float(globals()['spin_box_start%s' % 2].get()),
-                              float(globals()['spin_box_start%s' % 3].get()),
-                               float(globals()['spin_box_start%s' % 4].get())]
-                self.x = np.zeros((len(self.t), len(self.x0)))  # array for solution
-                self.x[0, :] = self.x0
-                self.i = 0
-                while self.i < self.num - 1:
-                    self.k1 = self.h * self.Fall(self.t, self.x[self.i, :], self.i)
-
-                    self.k2 = self.h * self.Fall(self.t, self.x[self.i, :] + self.k1 / 2, self.i)
-
-                    self.k3 = self.h * self.Fall(self.t, self.x[self.i, :] + self.k2 / 2, self.i)
-
-                    self.k4 = self.h * self.Fall(self.t, self.x[self.i, :] + self.k3, self.i)
-
-                    self.x[self.i + 1, :] = self.x[self.i, :] + 1 / 6 * (self.k1 + 2 * self.k2 + 2 * self.k3 + self.k4)
-                    self.i = self.i + 1
-                self.fig = Figure(figsize=(6, 6))
-                a = self.fig.add_subplot(111)
-                a.plot(self.t, self.x)
-                plt.xlabel('t axis')
-                plt.ylabel('x axis, Blue-Rabbits, Orange-Foxes, Green-Mice, Red-Owls')
-                plt.grid(alpha=.6, linestyle='--')
-
-                self.canvas1 = FigureCanvasTkAgg(self.fig, master=self.root)
-                self.canvas1.get_tk_widget().grid(row=0, column=4, sticky='N', rowspan=9)
-                self.canvas1.draw()
-            except:
-                tk.messagebox.showerror(title=None, message='Введите коэффициенты')
+   
     def Fone(self, t, x, i):
         self.omega = 1.0
-        return np.array([self.krb * (self.G + self.a * np.sin(self.omega * t[i]) + self.b * np.sin(self.omega * t[i])) *
-                         x[0] - self.krd * x[0] * x[1],
+        return np.array([self.krb * (self.G + self.a * np.sin(self.omega * t[i]) + self.b * np.sin(self.omega * t[i])) * x[0] - self.krd * x[0] * x[1],
                          self.kfb * x[0] * x[1] - self.kfd * x[1]])  # start and end
 
     def Ftwo(self, t, x, i):
         self.a = 0.5
         self.omega = 1.0
-        return np.array([self.krb * (self.G + self.a * np.sin(self.omega * t[i])) * x[0] - self.krd * x[0] * x[1],
+        return np.array([self.krb * (self.G + self.a * np.sin(self.omega * t[i]) + self.b * np.sin(self.omega * t[i])) * x[0] - self.krd * x[1]  * x[0],
                          self.kfb * (x[0] + x[2]) * x[1] - self.kfd * x[1],
-                         self.kmb * (self.G + self.a * np.sin(self.omega * t[i])) * x[2] - self.kmd * (x[1] + x[3]) * x[2],
-                         self.kob * x[2] * x[3] - self.kod * x[3]])  # start and end
+                         self.kmb * (self.G + self.a * np.sin(self.omega * t[i]) + self.b * np.sin(self.omega * t[i])) * x[2] - self.kmd * x[1]  * x[2]])
+
 
     def Fall(self, t, x, i):
         self.omega = 1.0
