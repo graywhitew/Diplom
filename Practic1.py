@@ -1,12 +1,9 @@
-import math
 import numpy as np
 from scipy import integrate
 import matplotlib.pyplot as plt
 from tkinter import *
 import tkinter as tk
 import tkinter.messagebox as mb
-import random
-import ttkthemes
 from tkinter import font as tkFont
 from PIL import Image, ImageTk
 import matplotlib
@@ -17,6 +14,7 @@ from ttkthemes import ThemedTk
 from ttkthemes import ThemedStyle
 import tkinter.filedialog as fd
 import sys
+from tkinter import messagebox
 import plotly.graph_objs as go
 import plotly.express as px
 from plotly.subplots import make_subplots
@@ -50,6 +48,10 @@ class App(tk.Tk):
         self.canvas1.grid(row=0, column=0, columnspan=4, sticky=W)
         self.canvas1.create_text(65,10,text = "Режимы работы:", fill = "white", font = 14)
 
+        self.canvasHeight = np.linspace(30, (self.height-(self.height*0.046)*5)-20, 7)
+        self.canvasWidth = np.linspace(10, self.width/2, 4)
+        print(self.canvasHeight, self.canvasWidth)
+
         self.canvas2 = tk.Canvas(self.root, height=str(self.height-(self.height*0.046)*5), width=str(self.width/1.75), bg="grey30")
         self.canvas2.grid(row=1, column=0, columnspan=4,rowspan=8, sticky=W)
         self.canvas2.create_text(110,10,text = "Настройка параметров:", fill = "white", font = ("Times New Romance", 15))
@@ -74,24 +76,24 @@ class App(tk.Tk):
         self.DefaultValues = (0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95)
         self.DefaultStartValues = (0,1,2,3,4,5,6,7,8,9,10)
 
-        self.slider_label = ttk.Label(
-            self.root,
-            text='Начальное значение травы:', font = 14
-        )
-        self.slider_label.grid(
-            column=0,
-            row=2,
-            sticky='w',
-            padx=10
-        )
-        self.slider = ttk.Scale(
-            self.root,
-            from_=0,
-            to=2,
-            orient='horizontal',
-            command=self.slider_changed,
-            variable=self.current_value
-        )
+        # self.slider_label = ttk.Label(
+        #     self.root,
+        #     text='Начальное значение травы:', font = 14
+        # )
+        # self.slider_label.grid(
+        #     column=0,
+        #     row=2,
+        #     sticky='w',
+        #     padx=10
+        # )
+        # self.slider = ttk.Scale(
+        #     self.root,
+        #     from_=0,
+        #     to=2,
+        #     orient='horizontal',
+        #     command=self.slider_changed,
+        #     variable=self.current_value
+        # )
 
         self.Vers = tk.IntVar(value=0)
         self.Choise = tk.IntVar(value=0)
@@ -110,50 +112,59 @@ class App(tk.Tk):
         self.OtherWindow = ttk.Button(self.root, text="В отдельном окне", command=self.NewWindow)
         self.DopKoef = ttk.Button(self.root, text="Дополнительные коэффициенты", command=self.Update)
 
-        self.CreateKoefSpinBox(1,'Значение коэф. \nрождаемости кроликов:',3,0,3,1)
-        self.CreateKoefSpinBox(2,'Значение коэф. \nсмертности кроликов:',3,2,3,3)
-        self.CreateKoefSpinBox(3,'Значение коэф. \nрождаемости лис:',4,0,4,1)
-        self.CreateKoefSpinBox(4,'Значение коэф. \nсмертности лис:',4,2,4,3)
-        self.CreateKoefSpinBox(9,'Коэф. \nантропогенного фактора:',5,0,5,1)
-        self.CreateKoefSpinBox(10,'Коэф. \nабиотического фактора:', 5,2,5,3)
-        self.StartValueSpinBox('Начальные \nзначения популяций', 6,0,6,1)
+        self.CreateKoefSpinBox(0,'Количество травы:',self.canvasWidth[0],self.canvasHeight[0],self.canvasWidth[1],self.canvasHeight[0]+10)
+        self.CreateKoefSpinBox(1,'Значение коэф. \nрождаемости кроликов:',self.canvasWidth[0],self.canvasHeight[1],self.canvasWidth[1],self.canvasHeight[1]+10)
+        self.CreateKoefSpinBox(2,'Значение коэф. \nсмертности кроликов:',self.canvasWidth[2],self.canvasHeight[1],self.canvasWidth[3],self.canvasHeight[1]+10)
+        self.CreateKoefSpinBox(3,'Значение коэф. \nрождаемости лис:',self.canvasWidth[0],self.canvasHeight[2],self.canvasWidth[1],self.canvasHeight[2]+10)
+        self.CreateKoefSpinBox(4,'Значение коэф. \nсмертности лис:',self.canvasWidth[2],self.canvasHeight[2],self.canvasWidth[3],self.canvasHeight[2]+10)
+        self.CreateKoefSpinBox(9,'Коэф. \nантропогенного фактора:',self.canvasWidth[0],self.canvasHeight[3],self.canvasWidth[1],self.canvasHeight[3]+10)
+        self.CreateKoefSpinBox(10,'Коэф. \nабиотического фактора:',self.canvasWidth[2],self.canvasHeight[3],self.canvasWidth[3],self.canvasHeight[3]+10)
+        self.StartValueSpinBox('Начальные \nзначения популяций', self.canvasWidth[0],self.canvasHeight[4],self.canvasWidth[1],self.canvasHeight[4]+10)
 
         self.Go.grid(row=9, column=0, sticky="w")
         self.Info.grid(row=9, column=1, sticky="w")
         self.OtherWindow.grid(row=9, column=3, sticky="w")
         self.DopKoef.grid(row=9, column=2, sticky="w")
 
-        self.slider.grid(
-                     column=1,
-                     row=2,
-                     sticky='w')
-        self.current_value_label = ttk.Label(
-            self.root,
-            text='Значение:'
-        )
-        self.current_value_label.grid(
-            row=2,
-            column=2,
-            sticky='w'
-        )
-        self.value_label = ttk.Label(
-            self.root,
-            text=self.get_current_value()
-        )
+        # self.slider.grid(
+        #              column=1,
+        #              row=2,
+        #              sticky='w')
+        # self.current_value_label = ttk.Label(
+        #     self.root,
+        #     text='Значение:'
+        # )
+        # self.current_value_label.grid(
+        #     row=2,
+        #     column=2,
+        #     sticky='w'
+        # )
+        # self.value_label = ttk.Label(
+        #     self.root,
+        #     text=self.get_current_value()
+        # )
 
-        self.value_label.grid(
-            row=2,
-            column=3,
-            sticky='w'
-        )
-
-        if self.root.state()!= 'normal':
-            sys.exit()
+        # self.value_label.grid(
+        #     row=2,
+        #     column=3,
+        #     sticky='w'
+        # )
+        # self.running = True
+        # while self.running:
+        #     if self.root.state()!= 'normal':
+        #         self.root.destroy()
+        #         sys.exit(0)
+        # if self.root.state()!= 'normal':
+        #     print("бибабоба")
+        #     sys.exit(0)
+            
+        # self.root.protocol("WM_DELETE_WINDOW", self.on_closing())
         self.root.mainloop()
-
+    # def on_closing(self):
+    #     if messagebox.askokcancel("Quit", "Do you want to quit?"):
+    #         self.root.destroy()
     def plot(self):
-        self.G = self.current_value.get()
-
+        self.G = float(globals()['spin_box%s' % 0].get())
         self.t0 = 0.0
         self.tmax = 350
         self.tspan = [self.t0, self.tmax]
@@ -166,12 +177,12 @@ class App(tk.Tk):
         # self.x[0, :] = self.x0
 
         if self.Vers.get() == 0:
-            self.canvas7.delete("formula")
-            self.Formula = """Формулы расчётов:\nПопуляция зайцев: krb * (Ground + A * sin(omega * t) + B * sin(omega * t)) * R - kdb * R * F,\nПопуляция Лис: krf * R * F - kdf * F"""
+            self.canvas7.delete("all")
+            self.TextFormula = """Формулы расчётов:\nПопуляция зайцев: krb * (Ground + A * sin(omega * t) + B * sin(omega * t)) * R - kdb * R * F,\nПопуляция Лис: krf * R * F - kdf * F"""
             # self.Formula = """Популяция зайцев: Коэф. рождаемости кроликов * (Трава + Коэф.  * sin(omega * t) + Коэф. * sin(omega * t)) * 
             #                   Количество кроликов - Коэф. смертности кроликов * Количество кроликов * Количество лис,
             #                   Популяция Лис:Коэф. рождаемости лис * Количество кроликов * Количество лис - Коэф. смертности лис * Количество лис"""
-            self.canvas7.create_text(400,35,text = self.Formula, fill = "white", font = ("Times New Romance", 14))
+            self.canvas7.create_text(400,35,text = self.TextFormula, fill = "white", font = ("Times New Romance", 14), tag = 'folmula')
             self.krb = float(globals()['spin_box%s' % 1].get())
             self.krd = float(globals()['spin_box%s' % 2].get())
             self.kfb = float(globals()['spin_box%s' % 3].get())
@@ -206,6 +217,10 @@ class App(tk.Tk):
 
         if self.Vers.get() == 1:
             try:
+                self.canvas7.delete("all")
+                self.TextFormula = """Формулы расчётов:\nПопуляция зайцев: krb * (Ground + A * sin(omega * t) + B * sin(omega * t)) * R - krd * R * F,\nПопуляция Лис: kfb * (R + M) * F - kfd * F
+\nПопуляция Мышей:kmb * (G + A * np.sin(omega * t) + B * np.sin(omega * t)) * M - self.kmd * F * M """
+                self.canvas7.create_text(375,55,text = self.TextFormula, fill = "white", font = ("Times New Romance", 13), tag = "formula")
                 self.krb = float(globals()['spin_box%s' % 1].get())
                 self.krd = float(globals()['spin_box%s' % 2].get())
                 self.kfb = float(globals()['spin_box%s' % 3].get())
@@ -246,6 +261,10 @@ class App(tk.Tk):
 
         if self.Vers.get() == 2:
             try:
+                self.canvas7.delete("all")
+                self.TextFormula = """Формулы расчётов:\nПопуляция зайцев: krb * (Ground + A * sin(omega * t) + B * sin(omega * t)) * R - krd * R * (F + O),\nПопуляция Лис: kfb * (R + M) * F - kfd * F
+\nПопуляция Мышей:kmb * (G + A * np.sin(omega * t) + B * np.sin(omega * t)) * M - self.kmd * F * M \nПопуляция Сов: kob * (R + M) * O - kod * O"""
+                self.canvas7.create_text(375,65,text = self.TextFormula, fill = "white", font = ("Times New Romance", 13), tag = "formula")
                 self.krb = float(globals()['spin_box%s' % 1].get())
                 self.krd = float(globals()['spin_box%s' % 2].get())
                 self.kfb = float(globals()['spin_box%s' % 3].get())
@@ -288,13 +307,14 @@ class App(tk.Tk):
                 tk.messagebox.showerror(title=None, message='Введите коэффициенты')
 
     def Update(self):
-        self.CreateKoefSpinBox(5,'Значение коэф. рождаемости мышей:',7,0,7,1)
-        self.CreateKoefSpinBox(6,'Значение коэф. смертности мышей:',7,2,7,3)
-        self.CreateKoefSpinBox(7,'Значение коэф. рождаемости сов:',8,0,8,1)
-        self.CreateKoefSpinBox(8,'Значение коэф. смертности сов:',8,2,8,3)
+        self.CreateKoefSpinBox(5,'Значение коэф. рождаемости мышей:',self.canvasWidth[0],self.canvasHeight[5],self.canvasWidth[1],self.canvasHeight[5])
+        self.CreateKoefSpinBox(6,'Значение коэф. смертности мышей:',self.canvasWidth[2],self.canvasHeight[5],self.canvasWidth[3],self.canvasHeight[5])
+        self.CreateKoefSpinBox(7,'Значение коэф. рождаемости сов:',self.canvasWidth[0],self.canvasHeight[6],self.canvasWidth[1],self.canvasHeight[6])
+        self.CreateKoefSpinBox(8,'Значение коэф. смертности сов:',self.canvasWidth[2],self.canvasHeight[6],self.canvasWidth[3],self.canvasHeight[6])
         self.DopKoef.grid_forget()
         self.DopKoef2 = ttk.Button(self.root, text="Убрать доп. коэффициенты", command=self.UbrDopKoef)
         self.DopKoef2.grid(row=9, column=2, sticky="w")
+
     def UbrDopKoef(self):
         for i in range(5,9):
             globals()['label_koef%s' % i].grid_forget()
@@ -302,9 +322,9 @@ class App(tk.Tk):
         self.DopKoef2.grid_forget()
         self.DopKoef = ttk.Button(self.root, text="Дополнительные коэффициенты", command=self.Update)
         self.DopKoef.grid(row=9, column=2, sticky="w")
-    def NewWindow(self):
-        self.G = self.current_value.get()
 
+    def NewWindow(self):
+        self.G = float(globals()['spin_box%s' % 0].get())
         self.t0 = 0.0
         self.tmax = 350
         self.tspan = [self.t0, self.tmax]
@@ -550,27 +570,29 @@ class App(tk.Tk):
             except:
                 tk.messagebox.showerror(title=None, message='Введите коэффициенты')
 
-    def CreateKoefSpinBox(self,number,text,rowlabel,columnlabel,rowbox,columnbox):
+    def CreateKoefSpinBox(self,number,text,xlabel,ylabel,xbox,ybox):
         globals()['label_koef%s' % number] = ttk.Label(self.root, text=text, font = 14)
-        globals()['label_koef%s' % number].grid(row=rowlabel,
-                                                column=columnlabel,
-                                                sticky='w',
-                                                padx=10)
+        # globals()['label_koef%s' % number].grid(row=rowlabel,
+        #                                         column=columnlabel,
+        #                                         sticky='w',
+        #                                         padx=10)
         globals()['current_value%s' % number] = tk.StringVar(value=0.05)
         globals()['spin_box%s' % number] = ttk.Spinbox(
         values=self.DefaultValues,
         font=('sans-serif', 12),
         textvariable=globals()['current_value%s' % number],
         width=5)
-        globals()['spin_box%s' % number].grid(row=rowbox, column=columnbox, sticky="w", padx = 10)
+        self.canvas2.create_window(xlabel, ylabel, anchor= NW, window = globals()['label_koef%s' % number])
+        self.canvas2.create_window(xbox, ybox, window = globals()['spin_box%s' % number])
+        # globals()['spin_box%s' % number].grid(row=rowbox, column=columnbox, sticky="w", padx = 10)
 
 
-    def StartValueSpinBox(self,text,rowlabel,columnlabel,rowbox,columnbox):
+    def StartValueSpinBox(self,text,xlabel,ylabel,xbox,ybox):
         globals()['label_koef_start%s' % 1] = ttk.Label(self.root, text=text, font = 14)
-        globals()['label_koef_start%s' % 1].grid(row=rowlabel,
-                                                    column=columnlabel,
-                                                    sticky='w',
-                                                    padx=10)
+        # globals()['label_koef_start%s' % 1].grid(row=rowlabel,
+        #                                             column=columnlabel,
+        #                                             sticky='w',
+        #                                             padx=10)
         for i in range(4):
             globals()['current_value_start%s' % (i+1)] = tk.StringVar(value=i+2)
             globals()['spin_box_start%s' % (i+1)] = ttk.Spinbox(
@@ -578,7 +600,9 @@ class App(tk.Tk):
             font=('sans-serif', 12),
             textvariable=globals()['current_value_start%s' % (i+1)],
             width=2)
-            globals()['spin_box_start%s' % (i+1)].grid(row=rowbox, column=columnbox, sticky="w", padx = i*45)
+            self.canvas2.create_window(xlabel, ylabel, anchor= NW, window = globals()['label_koef_start%s' % 1])
+            self.canvas2.create_window(xbox+i*45, ybox, window = globals()['spin_box_start%s' % (i+1)])
+            # .grid(row=rowbox, column=columnbox, sticky="w", padx = i*45)
 
     def slider_changed(self,event):
         self.value_label.configure(text=self.get_current_value())
