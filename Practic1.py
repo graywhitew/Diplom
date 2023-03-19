@@ -7,7 +7,8 @@ import tkinter.messagebox as mb
 from tkinter import font as tkFont
 from PIL import Image, ImageTk
 import matplotlib
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.backends.backend_tkagg import (
+    FigureCanvasTkAgg, NavigationToolbar2Tk)
 from matplotlib.figure import Figure
 from tkinter import ttk
 from ttkthemes import ThemedTk
@@ -33,10 +34,12 @@ class App(tk.Tk):
         self.width= self.root.winfo_screenwidth()
         self.height= self.root.winfo_screenheight()
         self.root.geometry("%dx%d" % (self.width, self.height))
-
+        if (self.width*self.height) != 1980*1080:
+            self.KoefSizeMon = (self.width*self.height)/(1980*1080)*1.3
+        print(self.width, self.height, self.KoefSizeMon)
         self.root.title("Хищник-жертва")
         self.style = ttk.Style()
-        self.root.tk.call('lappend', 'auto_path', '/Users/New/Downloads/awthemes-10.4.0')
+        self.root.tk.call('lappend', 'auto_path', '/home/graywhite/Загрузки/awthemes-10.4.0')
         self.root.tk.call('package', 'require', 'awthemes')
         self.root.tk.call('::themeutils::setHighlightColor', 'awdark', '#007000')
         self.root.tk.call('package', 'require', 'awdark')
@@ -44,32 +47,32 @@ class App(tk.Tk):
 
         self.Formula = ""
 
-        self.canvas1 = tk.Canvas(self.root, height=str(self.height*0.046), width=str(self.width/1.75), bg="grey30", borderwidth=2, relief=RIDGE)
-        self.canvas1.grid(row=0, column=0, columnspan=4, sticky=W)
-        self.canvas1.create_text(65,10,text = "Режимы работы:", fill = "white", font = 14)
+        self.canvas1 = tk.Canvas(self.root, height=str(self.height*0.09), width=str(self.width*0.65), bg="grey30", borderwidth=2, relief=RIDGE)
+        self.canvas1.grid(row=0, column=0, columnspan=4)
+        # self.canvas1.create_text(65,10,text = "Режимы работы:", fill = "white", font = int(14*self.KoefSizeMon))
 
-        self.canvasHeight = np.linspace(30, (self.height-(self.height*0.046)*5)-20, 7)
+        self.canvasHeight = np.linspace(30, self.height*0.65, 7)
         self.canvasWidth = np.linspace(10, self.width/2, 4)
-        print(self.canvasHeight, self.canvasWidth)
+        # print(self.canvasHeight, self.canvasWidth)
 
-        self.canvas2 = tk.Canvas(self.root, height=str(self.height-(self.height*0.046)*5), width=str(self.width/1.75), bg="grey30")
-        self.canvas2.grid(row=1, column=0, columnspan=4,rowspan=8, sticky=W)
-        self.canvas2.create_text(110,10,text = "Настройка параметров:", fill = "white", font = ("Times New Romance", 15))
+        self.canvas2 = tk.Canvas(self.root, height=str(self.height*0.72), width=str(self.width*0.65), bg="grey30")
+        self.canvas2.grid(row=1, column=0, columnspan=4,rowspan=8)
+        self.canvas2.create_text(110,10,text = "Настройка параметров:", fill = "white", font = ("Times New Romance", int(15*self.KoefSizeMon)))
 
-        self.canvas3 = tk.Canvas(self.root, height=str(self.height*0.046), width=str(self.width - self.width/1.75), bg="grey30", borderwidth=2, relief=RIDGE)
-        self.canvas3.grid(row=0, column=4, sticky=W)
-        self.canvas3.create_text(100,10,text = "Графики популяций:", fill = "white", font = ("Times New Romance", 15))
+        self.canvas3 = tk.Canvas(self.root, height=str(self.height*0.09), width=str(self.width*0.35), bg="grey30", borderwidth=2, relief=RIDGE)
+        self.canvas3.grid(row=0, column=4)
+        self.canvas3.create_text(100,10,text = "Графики популяций:", fill = "white", font = ("Times New Romance", int(15*self.KoefSizeMon)))
     
-        self.canvas4 = tk.Canvas(self.root, height=str(self.height-(self.height*0.046)*9.5), width=str(self.width - self.width/1.75), bg="grey30")
-        self.canvas4.grid(row=1, column=4, rowspan=6, sticky='NW')
+        self.canvas4 = tk.Canvas(self.root, height=str(self.height*0.54), width=str(self.width*0.35), bg="grey30")
+        self.canvas4.grid(row=1, column=4, rowspan=6)
 
-        self.canvas7 = tk.Canvas(self.root, height=str((self.height-(self.height*0.046)*6)-(self.height-(self.height*0.046)*9.5)), width=str(self.width - self.width/1.75), bg="grey30", borderwidth=2, relief=RIDGE)
-        self.canvas7.create_text(320,25,text = self.Formula, fill = "white", font = ("Times New Romance", 10), tag = "formula")
-        self.canvas7.grid(row=7, column=4, sticky=N)
+        self.canvas7 = tk.Canvas(self.root, height=str(self.height*0.18), width=str(self.width*0.35), bg="grey30", borderwidth=2, relief=RIDGE)
+        self.canvas7.create_text(320,25,text = self.Formula, fill = "white", font = ("Times New Romance", int(10*self.KoefSizeMon)), tag = "formula")
+        self.canvas7.grid(row=7, column=4)
 
-        self.canvas6 = tk.Canvas(self.root, height=str(self.height*0.046), width=self.width, bg="grey30", borderwidth=2, relief=RIDGE)
-        self.canvas6.create_text(165,10,text = "Written by Scherstobitov S.O. Russia. Volgograd. 2023", fill = "white", font = ("Times New Romance", 10))
-        self.canvas6.grid(row=10, column=0, columnspan=5, sticky=N)
+        self.canvas6 = tk.Canvas(self.root, height=str(self.height*0.09), width=self.width, bg="grey30", borderwidth=2, relief=RIDGE)
+        self.canvas6.create_text(165,10,text = "Written by Scherstobitov S.O. Russia. Volgograd. 2023", fill = "white", font = ("Times New Romance", int(12*self.KoefSizeMon)))
+        self.canvas6.grid(row=10, column=0, columnspan=5)
 
         self.current_value = tk.DoubleVar(value=1.2)
 
@@ -107,10 +110,10 @@ class App(tk.Tk):
         self.checkbutton3 = ttk.Radiobutton(text="Лисы-Кролики-Мыши-Совы", value=2, variable=self.Vers)
         self.checkbutton3.grid(row=0, column=2, sticky="w", padx=10)
 
-        self.Go = ttk.Button(self.root, text="Моделирование", command=self.plot, width=str(self.height*0.046))
-        self.Info = ttk.Button(self.root, text="Методичка", command=self.plot, width=str(self.height*0.046))
-        self.OtherWindow = ttk.Button(self.root, text="В отдельном окне", command=self.NewWindow)
-        self.DopKoef = ttk.Button(self.root, text="Дополнительные коэффициенты", command=self.Update)
+        self.Go = ttk.Button(self.root, text="Моделирование", command=self.plot, width=20)
+        self.Info = ttk.Button(self.root, text="Методичка", command=self.plot, width=20)
+        self.OtherWindow = ttk.Button(self.root, text="В отдельном окне", command=self.NewWindow, width=20)
+        self.DopKoef = ttk.Button(self.root, text="Дополнительные коэффициенты", command=self.Update, width=20)
 
         self.CreateKoefSpinBox(0,'Количество травы:',self.canvasWidth[0],self.canvasHeight[0],self.canvasWidth[1],self.canvasHeight[0]+10)
         self.CreateKoefSpinBox(1,'Значение коэф. \nрождаемости кроликов:',self.canvasWidth[0],self.canvasHeight[1],self.canvasWidth[1],self.canvasHeight[1]+10)
@@ -121,10 +124,10 @@ class App(tk.Tk):
         self.CreateKoefSpinBox(10,'Коэф. \nабиотического фактора:',self.canvasWidth[2],self.canvasHeight[3],self.canvasWidth[3],self.canvasHeight[3]+10)
         self.StartValueSpinBox('Начальные \nзначения популяций', self.canvasWidth[0],self.canvasHeight[4],self.canvasWidth[1],self.canvasHeight[4]+10)
 
-        self.Go.grid(row=9, column=0, sticky="w")
-        self.Info.grid(row=9, column=1, sticky="w")
-        self.OtherWindow.grid(row=9, column=3, sticky="w")
-        self.DopKoef.grid(row=9, column=2, sticky="w")
+        self.Go.grid(row=9, column=0, sticky="ew")
+        self.Info.grid(row=9, column=1, sticky="ew")
+        self.DopKoef.grid(row=9, column=2, sticky="ew")
+        self.OtherWindow.grid(row=9, column=3, sticky="ew")
 
         # self.slider.grid(
         #              column=1,
@@ -182,7 +185,7 @@ class App(tk.Tk):
             # self.Formula = """Популяция зайцев: Коэф. рождаемости кроликов * (Трава + Коэф.  * sin(omega * t) + Коэф. * sin(omega * t)) * 
             #                   Количество кроликов - Коэф. смертности кроликов * Количество кроликов * Количество лис,
             #                   Популяция Лис:Коэф. рождаемости лис * Количество кроликов * Количество лис - Коэф. смертности лис * Количество лис"""
-            self.canvas7.create_text(400,35,text = self.TextFormula, fill = "white", font = ("Times New Romance", 14), tag = 'folmula')
+            self.canvas7.create_text(400,35,text = self.TextFormula, fill = "white", font = ("Times New Romance", int(14*self.KoefSizeMon)), tag = 'folmula')
             self.krb = float(globals()['spin_box%s' % 1].get())
             self.krd = float(globals()['spin_box%s' % 2].get())
             self.kfb = float(globals()['spin_box%s' % 3].get())
@@ -205,7 +208,7 @@ class App(tk.Tk):
 
                 self.x[self.i + 1, :] = self.x[self.i, :] + 1 / 6 * (self.k1 + 2 * self.k2 + 2 * self.k3 + self.k4)
                 self.i = self.i + 1
-            self.fig = Figure(figsize=(6, 6))
+            self.fig = Figure(figsize=(3, 3))
             a = self.fig.add_subplot(111)
             a.plot(self.t, self.x)
             plt.xlabel('t axis')
@@ -214,13 +217,16 @@ class App(tk.Tk):
             self.canvas5 = FigureCanvasTkAgg(self.fig, master = self.root)
             self.canvas5.get_tk_widget().grid(row=1, column=4, sticky='NW', rowspan=9, padx=10)
             self.canvas5.draw()
+            self.toolbar = NavigationToolbar2Tk(self.canvas5, self.root)
+            self.toolbar.update()
+            
 
         if self.Vers.get() == 1:
             try:
                 self.canvas7.delete("all")
                 self.TextFormula = """Формулы расчётов:\nПопуляция зайцев: krb * (Ground + A * sin(omega * t) + B * sin(omega * t)) * R - krd * R * F,\nПопуляция Лис: kfb * (R + M) * F - kfd * F
 \nПопуляция Мышей:kmb * (G + A * np.sin(omega * t) + B * np.sin(omega * t)) * M - self.kmd * F * M """
-                self.canvas7.create_text(375,55,text = self.TextFormula, fill = "white", font = ("Times New Romance", 13), tag = "formula")
+                self.canvas7.create_text(375,55,text = self.TextFormula, fill = "white", font = ("Times New Romance", int(13*self.KoefSizeMon)), tag = "formula")
                 self.krb = float(globals()['spin_box%s' % 1].get())
                 self.krd = float(globals()['spin_box%s' % 2].get())
                 self.kfb = float(globals()['spin_box%s' % 3].get())
@@ -264,7 +270,7 @@ class App(tk.Tk):
                 self.canvas7.delete("all")
                 self.TextFormula = """Формулы расчётов:\nПопуляция зайцев: krb * (Ground + A * sin(omega * t) + B * sin(omega * t)) * R - krd * R * (F + O),\nПопуляция Лис: kfb * (R + M) * F - kfd * F
 \nПопуляция Мышей:kmb * (G + A * np.sin(omega * t) + B * np.sin(omega * t)) * M - self.kmd * F * M \nПопуляция Сов: kob * (R + M) * O - kod * O"""
-                self.canvas7.create_text(375,65,text = self.TextFormula, fill = "white", font = ("Times New Romance", 13), tag = "formula")
+                self.canvas7.create_text(375,65,text = self.TextFormula, fill = "white", font = ("Times New Romance", int(13*self.KoefSizeMon)), tag = "formula")
                 self.krb = float(globals()['spin_box%s' % 1].get())
                 self.krd = float(globals()['spin_box%s' % 2].get())
                 self.kfb = float(globals()['spin_box%s' % 3].get())
@@ -571,7 +577,7 @@ class App(tk.Tk):
                 tk.messagebox.showerror(title=None, message='Введите коэффициенты')
 
     def CreateKoefSpinBox(self,number,text,xlabel,ylabel,xbox,ybox):
-        globals()['label_koef%s' % number] = ttk.Label(self.root, text=text, font = 14)
+        globals()['label_koef%s' % number] = ttk.Label(self.root, text=text, font = int(14*self.KoefSizeMon))
         # globals()['label_koef%s' % number].grid(row=rowlabel,
         #                                         column=columnlabel,
         #                                         sticky='w',
@@ -579,16 +585,17 @@ class App(tk.Tk):
         globals()['current_value%s' % number] = tk.StringVar(value=0.05)
         globals()['spin_box%s' % number] = ttk.Spinbox(
         values=self.DefaultValues,
-        font=('sans-serif', 12),
+        font=('sans-serif', int(12)),
         textvariable=globals()['current_value%s' % number],
         width=5)
-        self.canvas2.create_window(xlabel, ylabel, anchor= NW, window = globals()['label_koef%s' % number])
+        self.canvas2.create_text(xlabel,ylabel,text = text, fill = "white", font = ("Times New Romance", int(14*self.KoefSizeMon)))
+        # self.canvas2.create_window(xlabel, ylabel, anchor= NW, window = globals()['label_koef%s' % number])
         self.canvas2.create_window(xbox, ybox, window = globals()['spin_box%s' % number])
         # globals()['spin_box%s' % number].grid(row=rowbox, column=columnbox, sticky="w", padx = 10)
 
 
     def StartValueSpinBox(self,text,xlabel,ylabel,xbox,ybox):
-        globals()['label_koef_start%s' % 1] = ttk.Label(self.root, text=text, font = 14)
+        globals()['label_koef_start%s' % 1] = ttk.Label(self.root, text=text, font = int(14*self.KoefSizeMon))
         # globals()['label_koef_start%s' % 1].grid(row=rowlabel,
         #                                             column=columnlabel,
         #                                             sticky='w',
@@ -597,21 +604,22 @@ class App(tk.Tk):
             globals()['current_value_start%s' % (i+1)] = tk.StringVar(value=i+2)
             globals()['spin_box_start%s' % (i+1)] = ttk.Spinbox(
             values=self.DefaultStartValues,
-            font=('sans-serif', 12),
+            font=('sans-serif', int(12)),
             textvariable=globals()['current_value_start%s' % (i+1)],
             width=2)
-            self.canvas2.create_window(xlabel, ylabel, anchor= NW, window = globals()['label_koef_start%s' % 1])
+            self.canvas2.create_text(xlabel,ylabel,text = text, fill = "white", font = ("Times New Romance", int(14*self.KoefSizeMon)))
+            # self.canvas2.create_window(xlabel, ylabel, anchor= NW, window = globals()['label_koef_start%s' % 1])
             self.canvas2.create_window(xbox+i*45, ybox, window = globals()['spin_box_start%s' % (i+1)])
             # .grid(row=rowbox, column=columnbox, sticky="w", padx = i*45)
 
-    def slider_changed(self,event):
-        self.value_label.configure(text=self.get_current_value())
+    # def slider_changed(self,event):
+    #     self.value_label.configure(text=self.get_current_value())
 
-    def get_current_value(self):
-        return '{: .2f}'.format(self.current_value.get())
+    # def get_current_value(self):
+    #     return '{: .2f}'.format(self.current_value.get())
 
-    def Plus(self,numb):
-        return float(numb)+1
+    # def Plus(self,numb):
+    #     return float(numb)+1
 
    
     def Fone(self, t, x, i):
