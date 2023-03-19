@@ -34,12 +34,12 @@ class App(tk.Tk):
         self.width= self.root.winfo_screenwidth()
         self.height= self.root.winfo_screenheight()
         self.root.geometry("%dx%d" % (self.width, self.height))
-        if (self.width*self.height) != 1980*1080:
+        if (self.width*self.height) < 1980*1080:
             self.KoefSizeMon = (self.width*self.height)/(1980*1080)*1.3
         print(self.width, self.height, self.KoefSizeMon)
         self.root.title("Хищник-жертва")
         self.style = ttk.Style()
-        self.root.tk.call('lappend', 'auto_path', '/home/graywhite/Загрузки/awthemes-10.4.0')
+        self.root.tk.call('lappend', 'auto_path', 'awthemes-10.4.0')
         self.root.tk.call('package', 'require', 'awthemes')
         self.root.tk.call('::themeutils::setHighlightColor', 'awdark', '#007000')
         self.root.tk.call('package', 'require', 'awdark')
@@ -57,21 +57,21 @@ class App(tk.Tk):
 
         self.canvas2 = tk.Canvas(self.root, height=str(self.height*0.72), width=str(self.width*0.65), bg="grey30")
         self.canvas2.grid(row=1, column=0, columnspan=4,rowspan=8)
-        self.canvas2.create_text(110,10,text = "Настройка параметров:", fill = "white", font = ("Times New Romance", int(15*self.KoefSizeMon)))
+        self.canvas2.create_text(0,0,text = "Настройка параметров:", anchor = NW, fill = "white", font = ("Times New Romance", int(15*self.KoefSizeMon)))
 
         self.canvas3 = tk.Canvas(self.root, height=str(self.height*0.09), width=str(self.width*0.35), bg="grey30", borderwidth=2, relief=RIDGE)
         self.canvas3.grid(row=0, column=4)
-        self.canvas3.create_text(100,10,text = "Графики популяций:", fill = "white", font = ("Times New Romance", int(15*self.KoefSizeMon)))
+        self.canvas3.create_text(0,0,text = "Графики популяций:", anchor = NW, fill = "white", font = ("Times New Romance", int(15*self.KoefSizeMon)))
     
         self.canvas4 = tk.Canvas(self.root, height=str(self.height*0.54), width=str(self.width*0.35), bg="grey30")
         self.canvas4.grid(row=1, column=4, rowspan=6)
 
         self.canvas7 = tk.Canvas(self.root, height=str(self.height*0.18), width=str(self.width*0.35), bg="grey30", borderwidth=2, relief=RIDGE)
-        self.canvas7.create_text(320,25,text = self.Formula, fill = "white", font = ("Times New Romance", int(10*self.KoefSizeMon)), tag = "formula")
+        self.canvas7.create_text(0,0,text = self.Formula, fill = "white",anchor = NW, font = ("Times New Romance", int(10*self.KoefSizeMon)), tag = "formula")
         self.canvas7.grid(row=7, column=4)
 
         self.canvas6 = tk.Canvas(self.root, height=str(self.height*0.09), width=self.width, bg="grey30", borderwidth=2, relief=RIDGE)
-        self.canvas6.create_text(165,10,text = "Written by Scherstobitov S.O. Russia. Volgograd. 2023", fill = "white", font = ("Times New Romance", int(12*self.KoefSizeMon)))
+        self.canvas6.create_text(0,0,text = "Written by Scherstobitov S.O. Russia. Volgograd. 2023",anchor = NW, fill = "white", font = ("Times New Romance", int(12*self.KoefSizeMon)))
         self.canvas6.grid(row=10, column=0, columnspan=5)
 
         self.current_value = tk.DoubleVar(value=1.2)
@@ -208,12 +208,11 @@ class App(tk.Tk):
 
                 self.x[self.i + 1, :] = self.x[self.i, :] + 1 / 6 * (self.k1 + 2 * self.k2 + 2 * self.k3 + self.k4)
                 self.i = self.i + 1
-            self.fig = Figure(figsize=(3, 3))
-            a = self.fig.add_subplot(111)
-            a.plot(self.t, self.x)
-            plt.xlabel('t axis')
-            plt.ylabel('x axis,Blue-Rabbits, Orange-Foxes')
-            plt.grid(alpha=.6, linestyle='--')
+            self.fig = Figure(figsize=(5, 5))
+            self.fig.plot(self.t, self.x)
+            self.fig.xlabel('t axis')
+            self.fig.ylabel('x axis,Blue-Rabbits, Orange-Foxes')
+            self.fig.grid(alpha=.6, linestyle='--')
             self.canvas5 = FigureCanvasTkAgg(self.fig, master = self.root)
             self.canvas5.get_tk_widget().grid(row=1, column=4, sticky='NW', rowspan=9, padx=10)
             self.canvas5.draw()
@@ -588,7 +587,7 @@ class App(tk.Tk):
         font=('sans-serif', int(12)),
         textvariable=globals()['current_value%s' % number],
         width=5)
-        self.canvas2.create_text(xlabel,ylabel,text = text, fill = "white", font = ("Times New Romance", int(14*self.KoefSizeMon)))
+        self.canvas2.create_text(xlabel,ylabel,text = text, fill = "white",anchor = NW, font = ("Times New Romance", int(14*self.KoefSizeMon)))
         # self.canvas2.create_window(xlabel, ylabel, anchor= NW, window = globals()['label_koef%s' % number])
         self.canvas2.create_window(xbox, ybox, window = globals()['spin_box%s' % number])
         # globals()['spin_box%s' % number].grid(row=rowbox, column=columnbox, sticky="w", padx = 10)
@@ -607,7 +606,7 @@ class App(tk.Tk):
             font=('sans-serif', int(12)),
             textvariable=globals()['current_value_start%s' % (i+1)],
             width=2)
-            self.canvas2.create_text(xlabel,ylabel,text = text, fill = "white", font = ("Times New Romance", int(14*self.KoefSizeMon)))
+            self.canvas2.create_text(xlabel,ylabel,text = text, fill = "white",anchor = NW, font = ("Times New Romance", int(14*self.KoefSizeMon)))
             # self.canvas2.create_window(xlabel, ylabel, anchor= NW, window = globals()['label_koef_start%s' % 1])
             self.canvas2.create_window(xbox+i*45, ybox, window = globals()['spin_box_start%s' % (i+1)])
             # .grid(row=rowbox, column=columnbox, sticky="w", padx = i*45)
