@@ -882,7 +882,6 @@ class Lab2(tk.Tk):
          
         if self.Vers.get() == 1:
             try:
-
                 self.Formula = """Формулы расчётов:\nПопуляция зайцев: krb * (Ground + A * sin(omega * t) + B * sin(omega * t)) * R - kdb * R * F\nПопуляция Лис: krf * R * F - kdf * F"""
                 self.label_Formula.config(text=self.Formula)
             
@@ -896,8 +895,6 @@ class Lab2(tk.Tk):
                 self.y0 = self.So/self.Ks
                 self.D = self.Ds/self.Mym
                 self.Gamma = self.g/self.Ks
-                        
-
 
                 self.x0 = [float(globals()['Lab2_spin_box_start%s' % 1].get()), float(globals()['Lab2_spin_box_start%s' % 2].get()), float(globals()['Lab2_spin_box_start%s' % 3].get())]
                 self.x = zeros((len(self.t), len(self.x0)))  # array for solution
