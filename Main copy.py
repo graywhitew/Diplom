@@ -9,11 +9,12 @@ from ttkthemes import ThemedTk
 from plotly.subplots import make_subplots
 from collections.abc import Callable
 from typing import Union
-from time import sleep
-from IPython.display import display, Latex
+# from time import sleep
+# from IPython.display import display, Latex
 
 customtkinter.set_appearance_mode("light") 
 # customtkinter.set_default_color_theme ("dark") 
+
 class Main(customtkinter.CTk):
     def __init__(self):
         super().__init__()
@@ -30,7 +31,6 @@ class Main(customtkinter.CTk):
         self.MainFrame = MyMainFrame(self)
         self.MainFrame.grid(row=0, column=0, padx=10, pady=(10, 0))
     
-
 class MyMainFrame(customtkinter.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
@@ -58,13 +58,134 @@ class MyMainFrame(customtkinter.CTkFrame):
             self.toplevel_window_Lab2.focus()
         # self.toplevel_window_Lab1.focus()
 
+class Setting(customtkinter.CTkToplevel):
+    def __init__(self, master):
+        super().__init__(master)
+        self.geometry("250x150")
+        self.title("Настройки")
+        self.scaling_label = customtkinter.CTkLabel(self, text="UI Scaling:", anchor="w", font=("Times", 20))
+        self.scaling_label.grid(row=7, column=0, padx=20, pady=(10, 0))
+        self.scaling_optionemenu = customtkinter.CTkOptionMenu(self, values=["80%", "90%", "100%", "110%", "120%"],
+                                                               command=self.change_scaling_event, width = 200)
+        self.scaling_optionemenu.grid(row=8, column=0, padx=20, pady=(10, 20))
+
+    def change_scaling_event(self, new_scaling: str):
+        new_scaling_float = int(new_scaling.replace("%", "")) / 100
+        customtkinter.set_widget_scaling(new_scaling_float)
+
+    def change_appearance_mode_event(self, new_appearance_mode: str):
+        customtkinter.set_appearance_mode(new_appearance_mode)
+
+class WidgetName(customtkinter.CTkFrame):
+    def __init__(self, *args,
+                 width: int = 100,
+                 height: int = 32,
+                 **kwargs):
+        super().__init__(*args, width=width, height=height, **kwargs)
+
+class FloatSpinbox(customtkinter.CTkFrame):
+    def __init__(self, *args,
+                 width: int = 100,
+                 height: int = 32,
+                 step_size: Union[int, float] = 1,
+                 command: Callable = None,
+                 def_value: int = 0,
+                 **kwargs):
+        super().__init__(*args, width=width, height=height, **kwargs)
+        self.def_value = def_value
+        self.step_size = step_size
+        self.command = command
+
+        self.configure(fg_color=("gray78", "gray28"))  # set frame color
+
+        self.grid_columnconfigure((0, 2), weight=0)  # buttons don't expand
+        self.grid_columnconfigure(1, weight=1)  # entry expands
+
+        self.subtract_button = customtkinter.CTkButton(self, text="-", width=height-6, height=height-6,
+                                                       command=self.subtract_button_callback)
+        self.subtract_button.grid(row=0, column=0, padx=(3, 0), pady=3)
+
+        self.entry = customtkinter.CTkEntry(self, width=width-(2*height), height=height-6, border_width=0)
+        self.entry.grid(row=0, column=1, columnspan=1, padx=3, pady=3, sticky="ew")
+
+        self.add_button = customtkinter.CTkButton(self, text="+", width=height-6, height=height-6,
+                                                  command=self.add_button_callback)
+        self.add_button.grid(row=0, column=2, padx=(0, 3), pady=3)
+
+        # default value
+        self.entry.insert(0, str(float(def_value)))
+
+    def add_button_callback(self):
+        if self.command is not None:
+            self.command()
+        try:
+            value = float(self.entry.get()) + self.step_size
+            self.entry.delete(0, "end")
+            self.entry.insert(0, round(value, 3))
+        except ValueError:
+            return
+
+    def subtract_button_callback(self):
+        if self.command is not None:
+            self.command()
+        if float(self.entry.get()) > 0:
+            try:
+                value = float(self.entry.get()) - self.step_size
+                self.entry.delete(0, "end")
+                self.entry.insert(0, round(value, 3))
+            except ValueError:
+                return
+
+    def get(self) -> Union[float, None]:
+        try:
+            return float(self.entry.get())
+        except ValueError:
+            return None
+
+    def set(self, value: float):
+        self.entry.delete(0, "end")
+        self.entry.insert(0, str(float(value)))
+    
+    def SpinboxConfigure(self, WidgetsState="normal"):
+        if WidgetsState == "normal":
+            self.entry.configure(state=WidgetsState, fg_color="white")
+        else:
+            self.entry.configure(state=WidgetsState, fg_color="black")
+
+class RadiobuttonFrame(customtkinter.CTkFrame):
+    def __init__(self, master, title, values, command):
+        super().__init__(master)
+        self.grid_columnconfigure((0,1,2), weight=1)
+        self.values = values
+        self.title = title
+        self.command = command
+        self.radiobuttons = []
+        self.variable = customtkinter.StringVar(value="")
+
+        self.title = customtkinter.CTkLabel(self, text=self.title, fg_color="azure", corner_radius=6)
+        self.title.grid(row=0, column=0,columnspan=3, padx=10, pady=(10, 0), sticky="ew")
+
+        for i, value in enumerate(self.values):
+            radiobutton = customtkinter.CTkRadioButton(self, text=value, value=value, variable=self.variable, command=self.command)
+            radiobutton.grid(row=1, column=i, padx=10, pady=(10, 0))
+            self.radiobuttons.append(radiobutton)
+
+    def get(self):
+        return self.variable.get()
+
+    def set(self, value):
+        self.variable.set(value)
+
+
 class Lab1(customtkinter.CTkToplevel):
     def __init__(self, master):
         super().__init__(master)
-        
+
+        self.toplevel_window_Lab1_setting = None
+
         self.Lab1_menu = tk.Menu(self)
         self.Lab1_menu.add_command(label="Справка")
-        self.Lab1_menu.add_command(label="Настройки")
+        self.Lab1_menu.add_command(label="Настройки", command=self.Lab1_Setting)
         self.config(menu=self.Lab1_menu)
 
         self.width= self.winfo_screenwidth()-100
@@ -75,7 +196,11 @@ class Lab1(customtkinter.CTkToplevel):
 
         self.Formula = ""
 
-        self.operating_mode_frame = RadiobuttonFrame(self, "Выбор режима", values=["Лисы-Кролики", "Лисы-Кролики-Мыши","Лисы-Кролики-Мыши-Совы"])
+        self.operating_mode_frame = RadiobuttonFrame(self,"Выбор режима",
+                                                      values=["Лисы-Кролики",
+                                                            "Лисы-Кролики-Мыши",
+                                                            "Лисы-Кролики-Мыши-Совы"],
+                                                        command=self.SwapMode)
         self.operating_mode_frame.grid(row=0, column=0, padx=(0, 10), pady=(10, 0), sticky="ew")
 
         self.Lab1ParamFrame = Lab1_Param_Frame(self)
@@ -92,6 +217,77 @@ class Lab1(customtkinter.CTkToplevel):
         
         # self.Lab1WrittenBy = Lab1_WrittenBy_Frame(self)
         # self.Lab1WrittenBy.grid(row=3, column=0, columnspan = 2, padx=10, pady=(10, 0), sticky="w")
+    def Lab1_Setting(self):
+        if self.toplevel_window_Lab1_setting is None or not self.toplevel_window_Lab1_setting.winfo_exists():
+            self.toplevel_window_Lab1_setting = Setting(self)
+            self.toplevel_window_Lab1_setting.focus()
+        else:
+            self.toplevel_window_Lab1_setting.focus()
+
+    def SwapMode(self):
+        self.Lab1ParamFrame.spinbox_1.SpinboxConfigure("disabled")
+        self.Lab1ParamFrame.spinbox_2.SpinboxConfigure("disabled")
+        self.Lab1ParamFrame.spinbox_3.SpinboxConfigure("disabled")
+        self.Lab1ParamFrame.spinbox_4.SpinboxConfigure("disabled")
+        self.Lab1ParamFrame.spinbox_5.SpinboxConfigure("disabled")
+        self.Lab1ParamFrame.spinbox_6.SpinboxConfigure("disabled")
+        self.Lab1ParamFrame.spinbox_7.SpinboxConfigure("disabled")
+        self.Lab1ParamFrame.spinbox_8.SpinboxConfigure("disabled")
+
+        self.Lab1ParamFrame.spinbox_9.SpinboxConfigure("disabled")
+        self.Lab1ParamFrame.spinbox_10.SpinboxConfigure("disabled")
+        self.Lab1ParamFrame.spinbox_11.SpinboxConfigure("disabled")
+        self.Lab1ParamFrame.spinbox_12.SpinboxConfigure("disabled")
+
+        self.Lab1ParamFrame.spinbox_13.SpinboxConfigure("disabled")
+        self.Lab1ParamFrame.spinbox_14.SpinboxConfigure("disabled")
+
+        if self.operating_mode_frame.get() == "Лисы-Кролики":
+            self.Lab1ParamFrame.spinbox_1.SpinboxConfigure("normal")
+            self.Lab1ParamFrame.spinbox_2.SpinboxConfigure("normal")
+            self.Lab1ParamFrame.spinbox_3.SpinboxConfigure("normal")
+            self.Lab1ParamFrame.spinbox_4.SpinboxConfigure("normal")
+
+            self.Lab1ParamFrame.spinbox_9.SpinboxConfigure("normal")
+            self.Lab1ParamFrame.spinbox_10.SpinboxConfigure("normal")
+
+            self.Lab1ParamFrame.spinbox_13.SpinboxConfigure("normal")
+            self.Lab1ParamFrame.spinbox_14.SpinboxConfigure("normal")
+   
+        elif self.operating_mode_frame.get() == "Лисы-Кролики-Мыши":
+            self.Lab1ParamFrame.spinbox_1.SpinboxConfigure("normal")
+            self.Lab1ParamFrame.spinbox_2.SpinboxConfigure("normal")
+            self.Lab1ParamFrame.spinbox_3.SpinboxConfigure("normal")
+            self.Lab1ParamFrame.spinbox_4.SpinboxConfigure("normal")
+            self.Lab1ParamFrame.spinbox_5.SpinboxConfigure("normal")
+            self.Lab1ParamFrame.spinbox_6.SpinboxConfigure("normal")
+
+            self.Lab1ParamFrame.spinbox_9.SpinboxConfigure("normal")
+            self.Lab1ParamFrame.spinbox_10.SpinboxConfigure("normal")
+            self.Lab1ParamFrame.spinbox_11.SpinboxConfigure("normal")
+
+            self.Lab1ParamFrame.spinbox_13.SpinboxConfigure("normal")
+            self.Lab1ParamFrame.spinbox_14.SpinboxConfigure("normal")
+            
+        elif self.operating_mode_frame.get() == "Лисы-Кролики-Мыши-Совы":
+            self.Lab1ParamFrame.spinbox_1.SpinboxConfigure("normal")
+            self.Lab1ParamFrame.spinbox_2.SpinboxConfigure("normal")
+            self.Lab1ParamFrame.spinbox_3.SpinboxConfigure("normal")
+            self.Lab1ParamFrame.spinbox_4.SpinboxConfigure("normal")
+            self.Lab1ParamFrame.spinbox_5.SpinboxConfigure("normal")
+            self.Lab1ParamFrame.spinbox_6.SpinboxConfigure("normal")
+            self.Lab1ParamFrame.spinbox_7.SpinboxConfigure("normal")
+            self.Lab1ParamFrame.spinbox_8.SpinboxConfigure("normal")
+
+            self.Lab1ParamFrame.spinbox_9.SpinboxConfigure("normal")
+            self.Lab1ParamFrame.spinbox_10.SpinboxConfigure("normal")
+            self.Lab1ParamFrame.spinbox_11.SpinboxConfigure("normal")
+            self.Lab1ParamFrame.spinbox_12.SpinboxConfigure("normal")
+        
+            self.Lab1ParamFrame.spinbox_13.SpinboxConfigure("normal")
+            self.Lab1ParamFrame.spinbox_14.SpinboxConfigure("normal")
+
+
 
     def Lab1_plot(self):
         self.G = self.Lab1ParamFrame.spinbox_0.get()
@@ -764,115 +960,31 @@ class Lab1_Button_Frame(customtkinter.CTkFrame):
         self.button.grid(row=0, column=2, padx=10, pady=10, sticky="ew")
         self.button = customtkinter.CTkButton(self, text="В отдельном окне", command=master.Lab1_NewWindow, width=50, height=50, font=("Times", 14))
         self.button.grid(row=0, column=3, padx=10, pady=10, sticky="ew")
-    
-class WidgetName(customtkinter.CTkFrame):
-    def __init__(self, *args,
-                 width: int = 100,
-                 height: int = 32,
-                 **kwargs):
-        super().__init__(*args, width=width, height=height, **kwargs)
-
-class FloatSpinbox(customtkinter.CTkFrame):
-    def __init__(self, *args,
-                 width: int = 100,
-                 height: int = 32,
-                 step_size: Union[int, float] = 1,
-                 command: Callable = None,
-                 def_value: int = 0,
-                 **kwargs):
-        super().__init__(*args, width=width, height=height, **kwargs)
-        self.def_value = def_value
-        self.step_size = step_size
-        self.command = command
-
-        self.configure(fg_color=("gray78", "gray28"))  # set frame color
-
-        self.grid_columnconfigure((0, 2), weight=0)  # buttons don't expand
-        self.grid_columnconfigure(1, weight=1)  # entry expands
-
-        self.subtract_button = customtkinter.CTkButton(self, text="-", width=height-6, height=height-6,
-                                                       command=self.subtract_button_callback)
-        self.subtract_button.grid(row=0, column=0, padx=(3, 0), pady=3)
-
-        self.entry = customtkinter.CTkEntry(self, width=width-(2*height), height=height-6, border_width=0)
-        self.entry.grid(row=0, column=1, columnspan=1, padx=3, pady=3, sticky="ew")
-
-        self.add_button = customtkinter.CTkButton(self, text="+", width=height-6, height=height-6,
-                                                  command=self.add_button_callback)
-        self.add_button.grid(row=0, column=2, padx=(0, 3), pady=3)
-
-        # default value
-        self.entry.insert(0, str(float(def_value)))
-
-    def add_button_callback(self):
-        if self.command is not None:
-            self.command()
-        try:
-            value = float(self.entry.get()) + self.step_size
-            self.entry.delete(0, "end")
-            self.entry.insert(0, round(value, 3))
-        except ValueError:
-            return
-
-    def subtract_button_callback(self):
-        if self.command is not None:
-            self.command()
-        if float(self.entry.get()) > 0:
-            try:
-                value = float(self.entry.get()) - self.step_size
-                self.entry.delete(0, "end")
-                self.entry.insert(0, round(value, 3))
-            except ValueError:
-                return
-
-    def get(self) -> Union[float, None]:
-        try:
-            return float(self.entry.get())
-        except ValueError:
-            return None
-
-    def set(self, value: float):
-        self.entry.delete(0, "end")
-        self.entry.insert(0, str(float(value)))
-
-class RadiobuttonFrame(customtkinter.CTkFrame):
-    def __init__(self, master, title, values):
-        super().__init__(master)
-        self.grid_columnconfigure((0,1,2), weight=1)
-        self.values = values
-        self.title = title
-        self.radiobuttons = []
-        self.variable = customtkinter.StringVar(value="")
-
-        self.title = customtkinter.CTkLabel(self, text=self.title, fg_color="azure", corner_radius=6)
-        self.title.grid(row=0, column=0,columnspan=3, padx=10, pady=(10, 0), sticky="ew")
-
-        for i, value in enumerate(self.values):
-            radiobutton = customtkinter.CTkRadioButton(self, text=value, value=value, variable=self.variable)
-            radiobutton.grid(row=1, column=i, padx=10, pady=(10, 0))
-            self.radiobuttons.append(radiobutton)
-
-    def get(self):
-        return self.variable.get()
-
-    def set(self, value):
-        self.variable.set(value)
 
 
 class Lab2(customtkinter.CTkToplevel):
     def __init__(self, master):
         super().__init__(master)
+
+        self.toplevel_window_Lab2_setting = None
+
         self.width= self.winfo_screenwidth()-100
         self.height= self.winfo_screenheight()/2
         self.geometry("%dx%d" % (self.width, self.height))
         self.title("Проточное моделирование микроорганизмов")
+
+        self.Lab2_menu = tk.Menu(self)
+        self.Lab2_menu.add_command(label="Справка")
+        self.Lab2_menu.add_command(label="Настройки", command=self.Lab2_Setting)
+        self.config(menu=self.Lab2_menu)
         
         self.Formula = ""
 
         self.operating_mode_frame = RadiobuttonFrame(self, "Выбор режима", values=["Проточная модель Моно\n без субст. угнетения", 
                                                                                     "Проточная модель Моно\n с субст. угнетением",
                                                                                     "Непроточная модель Моно\n без субст. угнетения",
-                                                                                    "Непроточная модель Моно\n с субст. угнетением"])
+                                                                                    "Непроточная модель Моно\n с субст. угнетением"], 
+                                                                                    command=self.SwapMode)
         self.operating_mode_frame.grid(row=0, column=0, padx=(0, 10), pady=(10, 0), sticky="ew")
 
         self.Lab2ParamFrame = Lab2_Param_Frame(self)
@@ -887,6 +999,68 @@ class Lab2(customtkinter.CTkToplevel):
         self.Lab2FormulaFrame = Lab2_Formula_Frame(self)
         self.Lab2FormulaFrame.grid(row=2, column=6, padx=10, pady=(10, 0), sticky="n")
     
+    def SwapMode(self):
+        pass
+        # self.Lab2ParamFrame.spinbox_1.SpinboxConfigure("disabled")
+        # self.Lab2ParamFrame.spinbox_2.SpinboxConfigure("disabled")
+        # self.Lab2ParamFrame.spinbox_3.SpinboxConfigure("disabled")
+        # self.Lab2ParamFrame.spinbox_4.SpinboxConfigure("disabled")
+        # self.Lab2ParamFrame.spinbox_5.SpinboxConfigure("disabled")
+        # self.Lab2ParamFrame.spinbox_6.SpinboxConfigure("disabled")
+        # self.Lab2ParamFrame.spinbox_7.SpinboxConfigure("disabled")
+        # self.Lab2ParamFrame.spinbox_8.SpinboxConfigure("disabled")
+
+        # if self.operating_mode_frame.get() == "Лисы-Кролики":
+        #     self.Lab2ParamFrame.spinbox_1.SpinboxConfigure("normal")
+        #     self.Lab2ParamFrame.spinbox_2.SpinboxConfigure("normal")
+        #     self.Lab2ParamFrame.spinbox_3.SpinboxConfigure("normal")
+        #     self.Lab2ParamFrame.spinbox_4.SpinboxConfigure("normal")
+
+        #     self.Lab2ParamFrame.spinbox_9.SpinboxConfigure("normal")
+        #     self.Lab2ParamFrame.spinbox_10.SpinboxConfigure("normal")
+
+        #     self.Lab2ParamFrame.spinbox_13.SpinboxConfigure("normal")
+        #     self.Lab2ParamFrame.spinbox_14.SpinboxConfigure("normal")
+   
+        # elif self.operating_mode_frame.get() == "Лисы-Кролики-Мыши":
+        #     self.Lab2ParamFrame.spinbox_1.SpinboxConfigure("normal")
+        #     self.Lab2ParamFrame.spinbox_2.SpinboxConfigure("normal")
+        #     self.Lab2ParamFrame.spinbox_3.SpinboxConfigure("normal")
+        #     self.Lab2ParamFrame.spinbox_4.SpinboxConfigure("normal")
+        #     self.Lab2ParamFrame.spinbox_5.SpinboxConfigure("normal")
+        #     self.Lab2ParamFrame.spinbox_6.SpinboxConfigure("normal")
+
+        #     self.Lab2ParamFrame.spinbox_9.SpinboxConfigure("normal")
+        #     self.Lab2ParamFrame.spinbox_10.SpinboxConfigure("normal")
+        #     self.Lab2ParamFrame.spinbox_11.SpinboxConfigure("normal")
+
+        #     self.Lab2ParamFrame.spinbox_13.SpinboxConfigure("normal")
+        #     self.Lab2ParamFrame.spinbox_14.SpinboxConfigure("normal")
+            
+        # elif self.operating_mode_frame.get() == "Лисы-Кролики-Мыши-Совы":
+        #     self.Lab2ParamFrame.spinbox_1.SpinboxConfigure("normal")
+        #     self.Lab2ParamFrame.spinbox_2.SpinboxConfigure("normal")
+        #     self.Lab2ParamFrame.spinbox_3.SpinboxConfigure("normal")
+        #     self.Lab2ParamFrame.spinbox_4.SpinboxConfigure("normal")
+        #     self.Lab2ParamFrame.spinbox_5.SpinboxConfigure("normal")
+        #     self.Lab2ParamFrame.spinbox_6.SpinboxConfigure("normal")
+        #     self.Lab2ParamFrame.spinbox_7.SpinboxConfigure("normal")
+        #     self.Lab2ParamFrame.spinbox_8.SpinboxConfigure("normal")
+
+        #     self.Lab2ParamFrame.spinbox_9.SpinboxConfigure("normal")
+        #     self.Lab2ParamFrame.spinbox_10.SpinboxConfigure("normal")
+        #     self.Lab2ParamFrame.spinbox_11.SpinboxConfigure("normal")
+        #     self.Lab2ParamFrame.spinbox_12.SpinboxConfigure("normal")
+        
+        #     self.Lab2ParamFrame.spinbox_13.SpinboxConfigure("normal")
+        #     self.Lab2ParamFrame.spinbox_14.SpinboxConfigure("normal")
+
+    def Lab2_Setting(self):
+        if self.toplevel_window_Lab2_setting is None or not self.toplevel_window_Lab2_setting.winfo_exists():
+            self.toplevel_window_Lab2_setting = Setting(self)
+            self.toplevel_window_Lab2_setting.focus()
+        else:
+            self.toplevel_window_Lab2_setting.focus()
     
     def Lab2_plot(self): 
         self.t0 = 0.0
@@ -1705,6 +1879,7 @@ class Lab2(customtkinter.CTkToplevel):
                 fig.show()
             except:
                 tk.messagebox.showerror(title=None, message='Введите коэффициенты')
+
 class Lab2_Graph_Frame(customtkinter.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
@@ -1776,24 +1951,3 @@ class Lab2_Button_Frame(customtkinter.CTkFrame):
 
 app = Main()
 app.mainloop()
-
-# Mainlabel_Written_main = ttk.Label(Main,text = "Электронный учебный модуль по предмету 'Биофизика'", font="Times 20")
-# Mainlabel_Written_main.pack(side=LEFT, expand=YES)
-
-# Mainframe1 = ttk.Frame(Main,height=height*0.3, width=width)
-# Mainframe1.grid(row=2,column=0, columnspan=2)
-# Mainframe1.propagate(False)
-
-# MainLabaratory1 = tk.Button(Mainframe1, text="Модифицированная модель хищник-жертва", command=Lab1, width=50, height=50)
-# MainLabaratory2 = tk.Button(Mainframe1, text="Проточные и непроточные микроорганизмы", command=Lab2, width=50, height=50)
-# MainLabaratory1.pack(side=LEFT, expand=YES)
-# MainLabaratory2.pack(side=LEFT, expand=YES)
-
-# Mainframe_Written = ttk.Frame(Main,height=height*0.1, width=width, relief=GROOVE)
-# Mainframe_Written.grid(row=3,column=0, columnspan=5)
-# Mainframe_Written.propagate(False)
-
-# Mainlabel_Written_by = ttk.Label(Mainframe_Written,text = "Written Sergey Scherstobitov Volgograd University 2023", font="Times 12")
-# Mainlabel_Written_by.pack(side=LEFT, padx = 20)
-
-# Main.mainloop()
