@@ -1,4 +1,4 @@
-import plotly.graph_objs as go
+from plotly.graph_objs import Scatter, Frame
 
 from customtkinter import CTk, CTkFrame, CTkToplevel, CTkLabel, CTkButton,set_appearance_mode, StringVar, CTkRadioButton, CTkEntry, CTkOptionMenu, set_widget_scaling
 from numpy import linspace, zeros, array, sin
@@ -201,7 +201,8 @@ class Lab1(CTkToplevel):
                                                             "Лисы-Кролики-Мыши-Совы"],
                                                         command=self.SwapMode)
         self.operating_mode_frame.grid(row=0, column=0, padx=(0, 10), pady=(10, 0), sticky="ew")
-
+        self.operating_mode_frame.set("Лисы-Кролики")
+        
         self.Lab1ParamFrame = Lab1_Param_Frame(self)
         self.Lab1ParamFrame.grid(row=1, column=0, padx=10, pady=(10, 0), sticky="e")
 
@@ -214,6 +215,7 @@ class Lab1(CTkToplevel):
         self.Lab1FormulaFrame = Lab1_Formula_Frame(self)
         self.Lab1FormulaFrame.grid(row=2, column=6, padx=10, pady=(10, 0), sticky="n")
         
+        self.SwapMode()
         # self.Lab1WrittenBy = Lab1_WrittenBy_Frame(self)
         # self.Lab1WrittenBy.grid(row=3, column=0, columnspan = 2, padx=10, pady=(10, 0), sticky="w")
     def Lab1_Setting(self):
@@ -653,17 +655,17 @@ class Lab1(CTkToplevel):
 
             self.num_steps = len(self.x[:, 0])
             fig = make_subplots(rows=1,cols=2)
-            fig.add_trace(go.Scatter(x=self.t, y=self.x[:, 0], mode='lines', name='Кролики'), row=1, col=1)
-            fig.add_trace(go.Scatter(x=self.t, y=self.x[:, 1], mode='lines', name='Лисы'), row=1, col=1)
-            fig.add_trace(go.Scatter(x=self.x[:, 0], y=self.x[:, 1], mode='lines', name='X - Кролики\nY - Лисы'), row=1,col=2)
+            fig.add_trace(Scatter(x=self.t, y=self.x[:, 0], mode='lines', name='Кролики'), row=1, col=1)
+            fig.add_trace(Scatter(x=self.t, y=self.x[:, 1], mode='lines', name='Лисы'), row=1, col=1)
+            fig.add_trace(Scatter(x=self.x[:, 0], y=self.x[:, 1], mode='lines', name='X - Кролики\nY - Лисы'), row=1,col=2)
 
             self.frames=[]
 
             for self.i in range(0, len(self.x[:, 0]), 2):
-                self.frames.append(go.Frame(name=str(self.i),
-                                    data=[go.Scatter(x=self.t[:self.i+1], y=self.x[:self.i+1,0], mode='lines', name='Кролики'),
-                                            go.Scatter(x=self.t[:self.i+1], y=self.x[:self.i+1,1], mode='lines', name='Лисы'),
-                                            go.Scatter(x=self.x[:self.i+1, 0], y=self.x[:self.i+1, 1], mode='lines', name='X - Кролики\nY - Лисы')]))
+                self.frames.append(Frame(name=str(self.i),
+                                    data=[Scatter(x=self.t[:self.i+1], y=self.x[:self.i+1,0], mode='lines', name='Кролики'),
+                                            Scatter(x=self.t[:self.i+1], y=self.x[:self.i+1,1], mode='lines', name='Лисы'),
+                                            Scatter(x=self.x[:self.i+1, 0], y=self.x[:self.i+1, 1], mode='lines', name='X - Кролики\nY - Лисы')]))
 
             self.steps = []
             for self.i in range(self.num_steps):
@@ -724,23 +726,23 @@ class Lab1(CTkToplevel):
                     self.i = self.i + 1
                 
                 fig = make_subplots(rows=1,cols=2)
-                fig.add_trace(go.Scatter(x=self.t, y=self.x[:, 0], mode='lines', name='Кролики'), row=1, col=1)
-                fig.add_trace(go.Scatter(x=self.t, y=self.x[:, 1], mode='lines', name='Лисы'), row=1, col=1)
-                fig.add_trace(go.Scatter(x=self.t, y=self.x[:, 2], mode='lines', name='Мыши'), row=1, col=1)
-                fig.add_trace(go.Scatter(x=self.x[:, 0], y=self.x[:, 1], mode='lines', name='X - Кролики\nY - Лисы'), row=1,col=2)
+                fig.add_trace(Scatter(x=self.t, y=self.x[:, 0], mode='lines', name='Кролики'), row=1, col=1)
+                fig.add_trace(Scatter(x=self.t, y=self.x[:, 1], mode='lines', name='Лисы'), row=1, col=1)
+                fig.add_trace(Scatter(x=self.t, y=self.x[:, 2], mode='lines', name='Мыши'), row=1, col=1)
+                fig.add_trace(Scatter(x=self.x[:, 0], y=self.x[:, 1], mode='lines', name='X - Кролики\nY - Лисы'), row=1,col=2)
 
                 self.num_steps = len(self.x[:, 0])
 
                 self.frames = []
                 for self.i in range(0, len(self.x[:, 0]), 2):
-                    self.frames.append(go.Frame(name=str(self.i),
-                                                data=[go.Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 0],
+                    self.frames.append(Frame(name=str(self.i),
+                                                data=[Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 0],
                                                                  mode='lines', name='Кролики'),
-                                                      go.Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 1],
+                                                      Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 1],
                                                                  mode='lines', name='Лисы'),
-                                                      go.Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 2],
+                                                      Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 2],
                                                                  mode='lines', name='Мыши'),
-                                                      go.Scatter(x=self.x[:self.i + 1, 0], y=self.x[:self.i + 1, 1], mode='lines', name='X - Кролики\nY - Лисы')]))
+                                                      Scatter(x=self.x[:self.i + 1, 0], y=self.x[:self.i + 1, 1], mode='lines', name='X - Кролики\nY - Лисы')]))
                                                       
 
                 self.steps = []
@@ -809,26 +811,26 @@ class Lab1(CTkToplevel):
                     self.i = self.i + 1
 
                 fig = make_subplots(rows=1,cols=2)
-                fig.add_trace(go.Scatter(x=self.t, y=self.x[:, 0], mode='lines', name='Кролики'), row=1, col=1)
-                fig.add_trace(go.Scatter(x=self.t, y=self.x[:, 1], mode='lines', name='Лисы'), row=1, col=1)
-                fig.add_trace(go.Scatter(x=self.t, y=self.x[:, 2], mode='lines', name='Мыши'), row=1, col=1)
-                fig.add_trace(go.Scatter(x=self.t, y=self.x[:, 3], mode='lines', name='Совы'), row=1, col=1)
-                fig.add_trace(go.Scatter(x=self.x[:, 0], y=self.x[:, 1], mode='lines', name='X - Кролики\nY - Лисы'), row=1,col=2)
+                fig.add_trace(Scatter(x=self.t, y=self.x[:, 0], mode='lines', name='Кролики'), row=1, col=1)
+                fig.add_trace(Scatter(x=self.t, y=self.x[:, 1], mode='lines', name='Лисы'), row=1, col=1)
+                fig.add_trace(Scatter(x=self.t, y=self.x[:, 2], mode='lines', name='Мыши'), row=1, col=1)
+                fig.add_trace(Scatter(x=self.t, y=self.x[:, 3], mode='lines', name='Совы'), row=1, col=1)
+                fig.add_trace(Scatter(x=self.x[:, 0], y=self.x[:, 1], mode='lines', name='X - Кролики\nY - Лисы'), row=1,col=2)
 
                 self.num_steps = len(self.x[:, 0])
 
                 self.frames = []
                 for self.i in range(0, len(self.x[:, 0]), 2):
-                    self.frames.append(go.Frame(name=str(self.i),
-                                                data=[go.Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 0],
+                    self.frames.append(Frame(name=str(self.i),
+                                                data=[Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 0],
                                                                  mode='lines', name='Кролики'),
-                                                      go.Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 1],
+                                                      Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 1],
                                                                  mode='lines', name='Лисы'),
-                                                      go.Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 2],
+                                                      Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 2],
                                                                  mode='lines', name='Мыши'),
-                                                      go.Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 3],
+                                                      Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 3],
                                                                  mode='lines', name='Совы'),
-                                                      go.Scatter(x=self.x[:self.i + 1, 0], y=self.x[:self.i + 1, 1], mode='lines', name='X - Кролики\nY - Лисы')]))
+                                                      Scatter(x=self.x[:self.i + 1, 0], y=self.x[:self.i + 1, 1], mode='lines', name='X - Кролики\nY - Лисы')]))
 
                 self.steps = []
                 for self.i in range(self.num_steps):
@@ -985,7 +987,8 @@ class Lab2(CTkToplevel):
                                                                                     "Непроточная модель Моно\n с субст. угнетением"], 
                                                                                     command=self.SwapMode)
         self.operating_mode_frame.grid(row=0, column=0, padx=(0, 10), pady=(10, 0), sticky="ew")
-
+        self.SwapMode()
+        self.operating_mode_frame.set("Проточная модель Моно\n без субст. угнетения")
         self.Lab2ParamFrame = Lab2_Param_Frame(self)
         self.Lab2ParamFrame.grid(row=1, column=0, padx=10, pady=(10, 0), sticky="we")
 
@@ -1063,7 +1066,7 @@ class Lab2(CTkToplevel):
     
     def Lab2_plot(self): 
         self.t0 = 0.0
-        self.tmax = 500
+        self.tmax = 100
         self.num = 2000
         self.tspan = [self.t0, self.tmax]
         self.t = linspace(self.t0, self.tmax, self.num)  # the points of evaluation of solution                   # initial value
@@ -1310,7 +1313,7 @@ class Lab2(CTkToplevel):
                          self.YB/(1+self.YB+self.Gamma*self.YB**2)])
     def Lab2_PhasePortrait(self):
         self.t0 = 0.0
-        self.tmax = 500
+        self.tmax = 100
         self.num = 2000
         self.tspan = [self.t0, self.tmax]
         self.t = linspace(self.t0, self.tmax, self.num)  # the points of evaluation of solution                   # initial value
@@ -1529,9 +1532,8 @@ class Lab2(CTkToplevel):
 
 
     def Lab2_NewWindow(self):
-        self.G = self.Lab2ParamFrame.spinbox_0.get()
         self.t0 = 0.0
-        self.tmax = 500
+        self.tmax = 100
         self.num = 2000
         self.tspan = [self.t0, self.tmax]
 
@@ -1572,17 +1574,17 @@ class Lab2(CTkToplevel):
 
                 self.num_steps = len(self.x[:, 0])
                 fig = make_subplots(rows=1,cols=2)
-                fig.add_trace(go.Scatter(x=self.t, y=self.x[:, 0], mode='lines', name='X-Биомасса'), row=1, col=1)
-                fig.add_trace(go.Scatter(x=self.t, y=self.x[:, 1], mode='lines', name='S-Субстрат'), row=1, col=1)
-                fig.add_trace(go.Scatter(x=self.x[:, 0], y=self.x[:, 1], mode='lines', name='x - X\ny - S'), row=1,col=2)
+                fig.add_trace(Scatter(x=self.t, y=self.x[:, 0], mode='lines', name='X-Биомасса'), row=1, col=1)
+                fig.add_trace(Scatter(x=self.t, y=self.x[:, 1], mode='lines', name='S-Субстрат'), row=1, col=1)
+                fig.add_trace(Scatter(x=self.x[:, 0], y=self.x[:, 1], mode='lines', name='x - X\ny - S'), row=1,col=2)
 
                 self.frames=[]
 
                 for self.i in range(0, len(self.x[:, 0]), 2):
-                    self.frames.append(go.Frame(name=str(self.i),
-                                        data=[go.Scatter(x=self.t[:self.i+1], y=self.x[:self.i+1,0], mode='lines', name='X-Биомасса'),
-                                                go.Scatter(x=self.t[:self.i+1], y=self.x[:self.i+1,1], mode='lines', name='S-Субстрат'),
-                                                go.Scatter(x=self.x[:self.i+1, 0], y=self.x[:self.i+1, 1], mode='lines', name='x - X\ny - S')]))
+                    self.frames.append(Frame(name=str(self.i),
+                                        data=[Scatter(x=self.t[:self.i+1], y=self.x[:self.i+1,0], mode='lines', name='X-Биомасса'),
+                                                Scatter(x=self.t[:self.i+1], y=self.x[:self.i+1,1], mode='lines', name='S-Субстрат'),
+                                                Scatter(x=self.x[:self.i+1, 0], y=self.x[:self.i+1, 1], mode='lines', name='x - X\ny - S')]))
 
                 self.steps = []
                 for self.i in range(self.num_steps):
@@ -1655,20 +1657,20 @@ class Lab2(CTkToplevel):
                     self.i = self.i + 1
                 
                 fig = make_subplots(rows=1,cols=2)
-                fig.add_trace(go.Scatter(x=self.t, y=self.x[:, 0], mode='lines', name='X-Биомасса'), row=1, col=1)
-                fig.add_trace(go.Scatter(x=self.t, y=self.x[:, 1], mode='lines', name='S-Субстрат'), row=1, col=1)
-                fig.add_trace(go.Scatter(x=self.x[:, 0], y=self.x[:, 1], mode='lines', name='x - X\ny - S'), row=1,col=2)
+                fig.add_trace(Scatter(x=self.t, y=self.x[:, 0], mode='lines', name='X-Биомасса'), row=1, col=1)
+                fig.add_trace(Scatter(x=self.t, y=self.x[:, 1], mode='lines', name='S-Субстрат'), row=1, col=1)
+                fig.add_trace(Scatter(x=self.x[:, 0], y=self.x[:, 1], mode='lines', name='x - X\ny - S'), row=1,col=2)
 
                 self.num_steps = len(self.x[:, 0])
 
                 self.frames = []
                 for self.i in range(0, len(self.x[:, 0]), 2):
-                    self.frames.append(go.Frame(name=str(self.i),
-                                                data=[go.Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 0],
+                    self.frames.append(Frame(name=str(self.i),
+                                                data=[Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 0],
                                                                  mode='lines', name='X-Биомасса'),
-                                                      go.Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 1],
+                                                      Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 1],
                                                                  mode='lines', name='S-Субстрат'),
-                                                      go.Scatter(x=self.x[:self.i + 1, 0], y=self.x[:self.i + 1, 1], mode='lines', name='x - X\ny - S')]))
+                                                      Scatter(x=self.x[:self.i + 1, 0], y=self.x[:self.i + 1, 1], mode='lines', name='x - X\ny - S')]))
                                                       
 
                 self.steps = []
@@ -1744,20 +1746,20 @@ class Lab2(CTkToplevel):
                     self.i = self.i + 1
 
                 fig = make_subplots(rows=1,cols=2)
-                fig.add_trace(go.Scatter(x=self.t, y=self.x[:, 0], mode='lines', name='X-Биомасса'), row=1, col=1)
-                fig.add_trace(go.Scatter(x=self.t, y=self.x[:, 1], mode='lines', name='S-Субстрат'), row=1, col=1)
-                fig.add_trace(go.Scatter(x=self.x[:, 0], y=self.x[:, 1], mode='lines', name='x - X\ny - S'), row=1,col=2)
+                fig.add_trace(Scatter(x=self.t, y=self.x[:, 0], mode='lines', name='X-Биомасса'), row=1, col=1)
+                fig.add_trace(Scatter(x=self.t, y=self.x[:, 1], mode='lines', name='S-Субстрат'), row=1, col=1)
+                fig.add_trace(Scatter(x=self.x[:, 0], y=self.x[:, 1], mode='lines', name='x - X\ny - S'), row=1,col=2)
 
                 self.num_steps = len(self.x[:, 0])
 
                 self.frames = []
                 for self.i in range(0, len(self.x[:, 0]), 2):
-                    self.frames.append(go.Frame(name=str(self.i),
-                                                data=[go.Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 0],
+                    self.frames.append(Frame(name=str(self.i),
+                                                data=[Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 0],
                                                                  mode='lines', name='X-Биомасса'),
-                                                      go.Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 1],
+                                                      Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 1],
                                                                  mode='lines', name='S-Субстрат'),
-                                                      go.Scatter(x=self.x[:self.i + 1, 0], y=self.x[:self.i + 1, 1], mode='lines', name='x - X\ny - S')]))
+                                                      Scatter(x=self.x[:self.i + 1, 0], y=self.x[:self.i + 1, 1], mode='lines', name='x - X\ny - S')]))
                                                       
                 self.steps = []
                 for self.i in range(self.num_steps):
@@ -1832,20 +1834,20 @@ class Lab2(CTkToplevel):
                     self.i = self.i + 1
 
                 fig = make_subplots(rows=1,cols=2)
-                fig.add_trace(go.Scatter(x=self.t, y=self.x[:, 0], mode='lines', name='X-Биомасса'), row=1, col=1)
-                fig.add_trace(go.Scatter(x=self.t, y=self.x[:, 1], mode='lines', name='S-Субстрат'), row=1, col=1)
-                fig.add_trace(go.Scatter(x=self.x[:, 0], y=self.x[:, 1], mode='lines', name='x - X\ny - S'), row=1,col=2)
+                fig.add_trace(Scatter(x=self.t, y=self.x[:, 0], mode='lines', name='X-Биомасса'), row=1, col=1)
+                fig.add_trace(Scatter(x=self.t, y=self.x[:, 1], mode='lines', name='S-Субстрат'), row=1, col=1)
+                fig.add_trace(Scatter(x=self.x[:, 0], y=self.x[:, 1], mode='lines', name='x - X\ny - S'), row=1,col=2)
 
                 self.num_steps = len(self.x[:, 0])
 
                 self.frames = []
                 for self.i in range(0, len(self.x[:, 0]), 2):
-                    self.frames.append(go.Frame(name=str(self.i),
-                                                data=[go.Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 0],
+                    self.frames.append(Frame(name=str(self.i),
+                                                data=[Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 0],
                                                                  mode='lines', name='X-Биомасса'),
-                                                      go.Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 1],
+                                                      Scatter(x=self.t[:self.i + 1], y=self.x[:self.i + 1, 1],
                                                                  mode='lines', name='S-Субстрат'),
-                                                      go.Scatter(x=self.x[:self.i + 1, 0], y=self.x[:self.i + 1, 1], mode='lines', name='x - X\ny - S')]))
+                                                      Scatter(x=self.x[:self.i + 1, 0], y=self.x[:self.i + 1, 1], mode='lines', name='x - X\ny - S')]))
                 self.steps = []
                 for self.i in range(self.num_steps):
                     self.step = dict(
