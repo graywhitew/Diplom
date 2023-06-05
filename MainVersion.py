@@ -10,6 +10,7 @@ from plotly.subplots import make_subplots
 from collections.abc import Callable
 from typing import Union
 import webbrowser
+from os import getcwd
 
 
 set_appearance_mode("light") 
@@ -881,7 +882,7 @@ class Lab1(CTkToplevel):
                 messagebox.showerror(title=None, message='Введите коэффициенты')
 
     def Lab1_Metodichka(self):
-        webbrowser.open_new("Методички/Методичка№1.pdf")
+        webbrowser.open_new(getcwd()+"/Методички/Методичка№1.pdf")
 
 
 class Lab1_Graph_Frame(CTkFrame):
@@ -1963,7 +1964,7 @@ class Lab2_Button_Frame(CTkFrame):
         self.button.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
         self.button = CTkButton(self, text="Фазовый портрет", command=master.Lab2_PhasePortrait, width=50, height=50, font=("Times", 14))
         self.button.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
-        self.button = CTkButton(self, text="Методичка", command=master.Lab2_plot, width=50, height=50, font=("Times", 14))
+        self.button = CTkButton(self, text="Методичка", command=master.Lab1_Metodichka, width=50, height=50, font=("Times", 14))
         self.button.grid(row=0, column=2, padx=10, pady=10, sticky="ew")
         self.button = CTkButton(self, text="В отдельном окне", command=master.Lab2_NewWindow, width=50, height=50, font=("Times", 14))
         self.button.grid(row=0, column=3, padx=10, pady=10, sticky="ew")
