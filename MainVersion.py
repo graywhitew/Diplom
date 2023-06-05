@@ -9,6 +9,7 @@ from tkinter import LEFT, YES, TOP, BOTH, Menu, messagebox
 from plotly.subplots import make_subplots
 from collections.abc import Callable
 from typing import Union
+import webbrowser
 
 
 set_appearance_mode("light") 
@@ -113,6 +114,9 @@ class FloatSpinbox(CTkFrame):
 
         # default value
         self.entry.insert(0, str(float(def_value)))
+        self.entry.bind("<Any-KeyRelease>", self.control_type)
+        self.add_button.bind('<Button-1>', self.control_type)
+        self.subtract_button.bind('<Button-2>', self.control_type)
 
     def add_button_callback(self):
         if self.command is not None:
@@ -134,6 +138,17 @@ class FloatSpinbox(CTkFrame):
                 self.entry.insert(0, round(value, 3))
             except ValueError:
                 return
+            
+    def control_type(self, button):
+        """Проверяет вводимые данные"""
+        try:
+            data = float(self.entry.get())
+            if data >= 0:
+                self.entry.configure(fg_color=("white"))
+            else:
+                self.entry.configure(fg_color=("red"))
+        except ValueError:
+            self.entry.configure(fg_color=("red"))
 
     def get(self) -> Union[float, None]:
         try:
@@ -865,6 +880,10 @@ class Lab1(CTkToplevel):
             except:
                 messagebox.showerror(title=None, message='Введите коэффициенты')
 
+    def Lab1_Metodichka(self):
+        webbrowser.open_new("Методички/Методичка№1.pdf")
+
+
 class Lab1_Graph_Frame(CTkFrame):
     def __init__(self, master):
         super().__init__(master)
@@ -957,7 +976,7 @@ class Lab1_Button_Frame(CTkFrame):
         self.button.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
         self.button = CTkButton(self, text="Фазовый портрет", command=master.Lab1_PhasePortrait, width=50, height=50, font=("Times", 14))
         self.button.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
-        self.button = CTkButton(self, text="Методичка", command=master.Lab1_plot, width=50, height=50, font=("Times", 14))
+        self.button = CTkButton(self, text="Методичка", command=master.Lab1_Metodichka, width=50, height=50, font=("Times", 14))
         self.button.grid(row=0, column=2, padx=10, pady=10, sticky="ew")
         self.button = CTkButton(self, text="В отдельном окне", command=master.Lab1_NewWindow, width=50, height=50, font=("Times", 14))
         self.button.grid(row=0, column=3, padx=10, pady=10, sticky="ew")
