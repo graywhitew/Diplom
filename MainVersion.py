@@ -178,7 +178,7 @@ class RadiobuttonFrame(CTkFrame):
         self.variable = StringVar(value="")
 
         self.title = CTkLabel(self, text=self.title, fg_color="azure", corner_radius=6)
-        self.title.grid(row=0, column=0,columnspan=3, padx=10, pady=(10, 0), sticky="ew")
+        self.title.grid(row=0, column=0,columnspan=4, padx=10, pady=(10, 0), sticky="ew")
 
         for i, value in enumerate(self.values):
             radiobutton = CTkRadioButton(self, text=value, value=value, variable=self.variable, command=self.command)
@@ -696,7 +696,7 @@ class Lab1(CTkToplevel):
                 steps=self.steps,
             )]
 
-            fig.update_layout(xaxis_title="t - Время", yaxis_title="X - Значение популяции",
+            fig.update_layout(xaxis_title="t - Время", yaxis_title="Значение популяции",
                               updatemenus=[dict(direction=LEFT,
                                                 x=1,
                                                 xanchor="center",
@@ -774,7 +774,7 @@ class Lab1(CTkToplevel):
                     steps=self.steps,
                 )]
 
-                fig.update_layout(xaxis_title="t - Время", yaxis_title="X - Значение популяции",updatemenus=[dict(direction=LEFT,
+                fig.update_layout(xaxis_title="t - Время", yaxis_title="Значение популяции",updatemenus=[dict(direction=LEFT,
                                                     x=1,
                                                     xanchor="center",
                                                     y=1,
@@ -861,7 +861,7 @@ class Lab1(CTkToplevel):
                     steps=self.steps,
                 )]
 
-                fig.update_layout(xaxis_title="t - Время", yaxis_title="X - Значение популяции",updatemenus=[dict(direction=LEFT,
+                fig.update_layout(xaxis_title="t - Время", yaxis_title="Значение популяции",updatemenus=[dict(direction=LEFT,
                                                     x=1,
                                                     xanchor="center",
                                                     y=1,
@@ -977,7 +977,7 @@ class Lab1_Button_Frame(CTkFrame):
         self.button.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
         self.button = CTkButton(self, text="Фазовый портрет", command=master.Lab1_PhasePortrait, width=50, height=50, font=("Times", 14))
         self.button.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
-        self.button = CTkButton(self, text="Методичка", command=master.Lab1_Metodichka, width=50, height=50, font=("Times", 14))
+        self.button = CTkButton(self, text="Методические указания", command=master.Lab1_Metodichka, width=50, height=50, font=("Times", 14))
         self.button.grid(row=0, column=2, padx=10, pady=10, sticky="ew")
         self.button = CTkButton(self, text="В отдельном окне", command=master.Lab1_NewWindow, width=50, height=50, font=("Times", 14))
         self.button.grid(row=0, column=3, padx=10, pady=10, sticky="ew")
@@ -992,7 +992,7 @@ class Lab2(CTkToplevel):
         self.width= self.winfo_screenwidth()-100
         self.height= self.winfo_screenheight()/2
         self.geometry("%dx%d" % (self.width, self.height))
-        self.title("Проточное моделирование микроорганизмов")
+        self.title("Моделирование проточных и непроточных культур микроорганизмов")
 
         self.Lab2_menu = Menu(self)
         self.Lab2_menu.add_command(label="Справка")
@@ -1020,7 +1020,11 @@ class Lab2(CTkToplevel):
 
         self.Lab2FormulaFrame = Lab2_Formula_Frame(self)
         self.Lab2FormulaFrame.grid(row=2, column=6, padx=10, pady=(10, 0), sticky="n")
-    
+
+    def Lab2_Metodichka(self):
+        print(getcwd()+"/Методички/Методичка№2.pdf")
+        webbrowser.open_new(getcwd()+"/Методички/Методичка№2.pdf")
+
     def SwapMode(self):
         pass
         # self.Lab2ParamFrame.spinbox_1.SpinboxConfigure("disabled")
@@ -1964,7 +1968,7 @@ class Lab2_Button_Frame(CTkFrame):
         self.button.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
         self.button = CTkButton(self, text="Фазовый портрет", command=master.Lab2_PhasePortrait, width=50, height=50, font=("Times", 14))
         self.button.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
-        self.button = CTkButton(self, text="Методичка", command=master.Lab1_Metodichka, width=50, height=50, font=("Times", 14))
+        self.button = CTkButton(self, text="Методические указания", command=master.Lab2_Metodichka, width=50, height=50, font=("Times", 14))
         self.button.grid(row=0, column=2, padx=10, pady=10, sticky="ew")
         self.button = CTkButton(self, text="В отдельном окне", command=master.Lab2_NewWindow, width=50, height=50, font=("Times", 14))
         self.button.grid(row=0, column=3, padx=10, pady=10, sticky="ew")
